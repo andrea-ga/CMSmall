@@ -12,6 +12,7 @@ app.use(express.json());
 app.use(cors());
 
 const pagesDao = require('./pages-dao');
+const {Page, Block} = require('./cms');
 
 app.get('/api/pages', (req, res) => {
     pagesDao.getAllPages().then((result) => {
@@ -30,6 +31,26 @@ app.get('/api/pages/:idPage', (req, res) => {
         res.status(500).send(error.message);
     });
 }) ;
+
+app.post('/api/pages', (req, res) => {
+    const page = new Page(null, req.body.title, req.body.idUser, req.body.creationDate, req.body.publicationDate);
+    pagesDao.createPage(page).then((result) => {
+        res.end();
+    }).catch((error) => {
+        res.set('Content-Type: text/plain');
+        res.status(500).send(error.message);
+    });
+});
+
+app.post('/api/pages/:idPage', (req, res) => {
+    const block = new Block(null, req.params.idPage, req.body.type, req.body.content, req.body.position);
+    pagesDao.createBlock(block).then((result) => {
+        res.end();
+    }).catch((error) => {
+        res.set('Content-Type: text/plain');
+        res.status(500).send(error.message);
+    });
+});
 
 app.listen(PORT,
     () => { console.log(`Server started on http://localhost:${PORT}/`) });

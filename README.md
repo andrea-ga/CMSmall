@@ -24,15 +24,27 @@
   - response body content: list a page content
 - POST `/api/pages/`
   - request parameters
-  - request body content: list of blocks
+  - request body content: page properties
+  - response body content: result
+- POST `/api/pages/:idPage`
+  - request parameters: page id
+  - request body content: block properties
   - response body content: result
 - DELETE `/api/pages/:idPage`
   - request parameters: page id
   - request body content
   - response body content: result
+- DELETE `/api/pages/:idPage/blocks/:idBlock`
+  - request parameters: page id, block id
+  - request body content
+  - response body content: result
 - PUT `/api/pages/:idPage`
   - request parameters: page id
   - request body content: list of blocks
+  - response body content: result
+- PUT `/api/pages/:idPage/blocks/:idBlock`
+  - request parameters: page id, block id
+  - request body content: block properties
   - response body content: result
 
 ## Database Tables
@@ -42,7 +54,7 @@
 - Table `pages` - contains the website pages
   (id, title, idUser, creationDate, publicationDate)
 - Table `blocks` - contains the website contents
-  (id, idPage, type, content)
+  (id, idPage, type, content, position)
 
 # Client side
 

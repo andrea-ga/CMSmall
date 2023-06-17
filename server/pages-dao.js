@@ -35,5 +35,32 @@ function getPageContent(idPage) {
     });
 }
 
+function createPage(page) {
+    return new Promise((resolve, reject) => {
+        const sql = 'INSERT INTO pages(title, iduser, creationdate, publicationdate) VALUES (?,?,?,?)';
+        db.run(sql, [page.title, page.idUser, page.creationDate.toISOString(), page.publicationDate.toISOString()]
+            , (err) => {
+                if(err)
+                    reject(err);
+                else
+                    resolve(true);
+            });
+    });
+}
+
+function createBlock(block) {
+    return new Promise((resolve, reject) => {
+        const sql = 'INSERT INTO blocks(idpage, type, content, position) VALUES (?,?,?,?)';
+        db.run(sql, [block.idPage, block.type, block.content, block.position], (err) => {
+                if(err)
+                    reject(err);
+                else
+                    resolve(true);
+            });
+    });
+}
+
 exports.getAllPages = getAllPages;
 exports.getPageContent = getPageContent;
+exports.createPage = createPage;
+exports.createBlock = createBlock;

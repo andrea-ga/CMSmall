@@ -10,11 +10,12 @@ function Page(id, title, idUser, creationDate, publicationDate) {
     this.publicationDate = dayjs(publicationDate);
 }
 
-function Block(id, idPage, type, content) {
+function Block(id, idPage, type, content, position) {
     this.id = id;
     this.idPage = idPage;
     this.type = type;
     this.content = content;
+    this.position = position;
 }
 
 exports.Page = Page;
