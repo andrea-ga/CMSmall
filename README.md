@@ -18,7 +18,7 @@
   - request parameters
   - request body content
   - response body content: list of all the website pages
-- GET `/api/pages/:pageid`
+- GET `/api/pages/:idPage`
   - request parameters: page id
   - request body content
   - response body content: list a page content
@@ -26,11 +26,11 @@
   - request parameters
   - request body content: list of blocks
   - response body content: result
-- DELETE `/api/pages/:pageid`
+- DELETE `/api/pages/:idPage`
   - request parameters: page id
   - request body content
   - response body content: result
-- PUT `/api/pages/:pageid`
+- PUT `/api/pages/:idPage`
   - request parameters: page id
   - request body content: list of blocks
   - response body content: result

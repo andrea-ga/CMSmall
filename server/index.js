@@ -11,9 +11,24 @@ app.use(morgan('combined'));
 app.use(express.json());
 app.use(cors());
 
-app.get('/guess', (req, res) => {
-    const n = Math.floor(Math.random()*100) ;
-    res.send(String(n)) ;
+const pagesDao = require('./pages-dao');
+
+app.get('/api/pages', (req, res) => {
+    pagesDao.getAllPages().then((result) => {
+        res.json(result);
+    }).catch((error) => {
+        res.status(500).send(error.message);
+    });
+});
+
+app.get('/api/pages/:idPage', (req, res) => {
+    const idPage = req.params.idPage;
+
+    pagesDao.getPageContent(idPage).then((result) => {
+        res.json(result);
+    }).catch((error) => {
+        res.status(500).send(error.message);
+    });
 }) ;
 
 app.listen(PORT,
