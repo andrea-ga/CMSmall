@@ -8,21 +8,41 @@
 ## API Server
 
 - POST `/api/login`
-  - request parameters and request body content
-  - response body content
-- GET `/api/something`
   - request parameters
-  - response body content
-- POST `/api/something`
-  - request parameters and request body content
-  - response body content
-- ...
+  - request body content: email, password
+  - response body content: login result
+- POST `/api/logout`
+  - request parameters
+  - response body content: logout result
+- GET `/api/pages`
+  - request parameters
+  - request body content
+  - response body content: list of all the website pages
+- GET `/api/pages/:pageid`
+  - request parameters: page id
+  - request body content
+  - response body content: list a page content
+- POST `/api/pages/`
+  - request parameters
+  - request body content: list of blocks
+  - response body content: result
+- DELETE `/api/pages/:pageid`
+  - request parameters: page id
+  - request body content
+  - response body content: result
+- PUT `/api/pages/:pageid`
+  - request parameters: page id
+  - request body content: list of blocks
+  - response body content: result
 
 ## Database Tables
 
-- Table `users` - contains xx yy zz
-- Table `something` - contains ww qq ss
-- ...
+- Table `users` - contains the registered users 
+  (id, username, email, role)
+- Table `pages` - contains the website pages
+  (id, title, idUser, creationDate, publicationDate)
+- Table `blocks` - contains the website contents
+  (id, idPage, type, content)
 
 # Client side
 
