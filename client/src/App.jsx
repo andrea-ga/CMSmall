@@ -1,34 +1,52 @@
-import { useState } from 'react';
-import { Button, Col, Container, Row } from 'react-bootstrap';
-import { getGuess } from './API';
+import { Container, Navbar } from 'react-bootstrap';
+import { BrowserRouter, Link, Outlet, Route, Routes, useParams } from 'react-router-dom';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
-
+import { useEffect, useState } from "react";
+import { getPages } from './API';
+import { PagesList } from "./PagesList";
+import { BlockList } from "./BlockList.jsx";
 
 function App() {
+    const [pages, setPages] = useState([]);
 
-  const [guess, setGuess] = useState(100);
+    useEffect(() => {
+        getPages().then((list) => {
+            setPages(list);
+        })
+    }, []);
 
-  const newGuess = async () => {
-    try {
-      const n = await getGuess();
-      setGuess(n);
-    } catch (e) {
-      console.log(e);
-    }
-  }
+    return <BrowserRouter>
+        <Routes>
+            <Route element={<MainLayout />}>
+                <Route index element={<PagesList pages={pages} />} />
+                <Route path='/pages/:idPage'
+                       element={<BlockList pages={pages} />} />
+            </Route>
+        </Routes>
+    </BrowserRouter>;
+}
 
-  return (
-    <Container>
-      <Row>
-        <h1>App</h1>
-      </Row>
-      <Row>
-        <Col><Button onClick={newGuess}>Guess a number</Button></Col>
-        <Col>{guess}</Col>
-      </Row>
-    </Container>
-  )
+function MainLayout() {
+    const { idQuestion } = useParams();
+    return <>
+        <header>
+            <Navbar sticky="top" variant='dark' bg="primary" expand="lg" className='mb-3'>
+                <Container>
+                    <Navbar.Brand><Link to='/' style={{ color: 'white', textDecoration: 'none' }}>CMSmall</Link> {idQuestion && <span>- Question {idQuestion}</span>} </Navbar.Brand>
+                    <Navbar.Text>
+                        Signed in as: Tom
+                    </Navbar.Text>
+                </Container>
+            </Navbar>
+        </header>
+        <main>
+            <Container>
+                <Outlet />
+            </Container>
+        </main>
+
+    </>
 }
 
 export default App

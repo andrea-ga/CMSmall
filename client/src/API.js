@@ -1,20 +1,27 @@
-const APIURL = 'http://localhost:3000';
+const APIURL = 'http://localhost:3000/api';
 
-async function getGuess() {
-
+async function getPages() {
     try {
-        const response = await fetch(APIURL + '/guess');
-        if (response.ok)
-        {
-            const n = await response.text() ;
-            return Number(n) ;
-        } else 
-            throw new Error() ;
+        const response = await fetch(APIURL + '/pages');
+        if (response.ok) {
+            return await response.json();
+        } else
+            throw new Error();
     } catch(e) {
         throw new Error(e) ;
     }
-
-
 }
 
-export { getGuess };
+async function getBlocks(idPage) {
+    try {
+        const response = await fetch(APIURL + `/pages/${idPage}`);
+        if (response.ok) {
+            return await response.json();
+        } else
+            throw new Error();
+    } catch(e) {
+        throw new Error(e) ;
+    }
+}
+
+export { getPages, getBlocks };

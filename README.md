@@ -61,16 +61,13 @@
 
 ## React Client Application Routes
 
-- Route `/`: page content and purpose
-- Route `/something/:param`: page content and purpose, param specification
-- ...
-
+- Route `/`: shows a list of all the pages
+- Route `/pages/:idPage`: shows all the page blocks
 
 ## Main React Components
 
-- `ListOfSomething` (in `List.js`): component purpose and main functionality
-- `GreatButton` (in `GreatButton.js`): component purpose and main functionality
-- ...
+- `PagesList` (in `PagesList.jsx`): retrieves the pages and shows them
+- `BlockList` (in `BlockList.jsx`): retrieves a page blocks and shows them
 
 (only _main_ components, minor ones may be skipped)
 

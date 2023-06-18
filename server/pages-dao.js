@@ -28,7 +28,7 @@ function getPageContent(idPage) {
             if (err)
                 reject(err);
             else {
-                const blocks = rows.map(row => new Block(row.id, row.idpage, row.type, row.content));
+                const blocks = rows.map(row => new Block(row.id, row.idpage, row.type, row.content, row.position));
                 resolve(blocks);
             }
         });
