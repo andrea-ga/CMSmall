@@ -4,7 +4,8 @@ import {getBlocks} from "./API.js";
 import {Link} from "react-router-dom";
 
 function PagesList(props) {
-    return <CardGroup>
+    return <div>
+    <CardGroup>
         {props.pages.map((p) => (
             <Card key={p.id}>
                 <Card.Body>
@@ -18,6 +19,8 @@ function PagesList(props) {
             </Card>
         ))}
     </CardGroup>
+        <Link to={`/pages/add`}>Add Page</Link>
+    </div>
 }
 
 function PageDetails(props) {

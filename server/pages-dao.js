@@ -40,8 +40,10 @@ function createPage(page) {
         const sql = 'INSERT INTO pages(title, iduser, creationdate, publicationdate) VALUES (?,?,?,?)';
         db.run(sql, [page.title, page.idUser, page.creationDate.toISOString(), page.publicationDate.toISOString()]
             , (err) => {
-                if(err)
+                if(err) {
+                    console.log(err);
                     reject(err);
+                }
                 else
                     resolve(true);
             });
@@ -87,7 +89,7 @@ function deleteBlock(idPage, idBlock) {
 function updatePage(idPage, page) {
     return new Promise((resolve, reject) => {
         const sql = 'UPDATE pages SET title=?, iduser=?, creationdate=?, publicationdate=? WHERE id=?';
-        db.run(sql, [page.title, page.idUser, page.creationDate, page.publicationDate, idPage], (err) => {
+        db.run(sql, [page.title, page.idUser, page.creationDate.toISOString(), page.publicationDate.toISOString(), idPage], (err) => {
             if(err)
                 reject(err);
             else
@@ -99,7 +101,7 @@ function updatePage(idPage, page) {
 function updateBlock(idPage, idBlock, block) {
     return new Promise((resolve, reject) => {
         const sql = 'UPDATE blocks SET idpage=?, type=?, content=?, position=? WHERE id=? AND idpage=?';
-        db.run(sql, [block.idPage, block.type, block.content, block.position, idPage, idBlock], (err) => {
+        db.run(sql, [block.idPage, block.type, block.content, block.position, idBlock, idPage], (err) => {
             if(err)
                 reject(err);
             else

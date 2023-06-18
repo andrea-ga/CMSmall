@@ -33,7 +33,7 @@ app.get('/api/pages/:idPage', (req, res) => {
 }) ;
 
 app.post('/api/pages', (req, res) => {
-    const page = new Page(null, req.body.title, req.body.idUser, req.body.creationDate, req.body.publicationDate);
+        const page = new Page(null, req.body.title, req.body.idUser, req.body.creationDate, req.body.publicationDate);
     pagesDao.createPage(page).then((result) => {
         res.end();
     }).catch((error) => {
@@ -73,7 +73,7 @@ app.delete('/api/pages/:idPage/blocks/:idBlock', (req, res) => {
 
 app.put('/api/pages/:idPage', (req, res) => {
     const idPage = req.params.idPage;
-    const page = new Page(null, req.body.title, req.body.idUser, req.body.creationDate.toISOString(), req.body.publicationDate.toISOString());
+        const page = new Page(null, req.body.title, req.body.idUser, req.body.creationDate, req.body.publicationDate);
     pagesDao.updatePage(idPage, page).then((result) => {
         res.end();
     }).catch((error) => {
@@ -85,7 +85,7 @@ app.put('/api/pages/:idPage/blocks/:idBlock', (req, res) => {
     const idPage = req.params.idPage;
     const idBlock = req.params.idBlock;
     const block = new Block(null, req.body.idPage, req.body.type, req.body.content, req.body.position);
-    pagesDao.updatePage(idPage, idBlock, block).then((result) => {
+    pagesDao.updateBlock(idPage, idBlock, block).then((result) => {
         res.end();
     }).catch((error) => {
         res.status(500).send(error.message);

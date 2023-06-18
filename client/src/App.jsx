@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { getPages } from './API';
 import { PagesList } from "./PagesList";
 import { BlockList } from "./BlockList.jsx";
+import { AddPage } from "./AddPage.jsx";
 
 function App() {
     const [pages, setPages] = useState([]);
@@ -22,6 +23,8 @@ function App() {
                 <Route index element={<PagesList pages={pages} />} />
                 <Route path='/pages/:idPage'
                        element={<BlockList pages={pages} />} />
+                <Route path='/pages/add'
+                       element={<AddPage />} />
             </Route>
         </Routes>
     </BrowserRouter>;
