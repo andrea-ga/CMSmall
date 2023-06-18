@@ -52,5 +52,45 @@ app.post('/api/pages/:idPage', (req, res) => {
     });
 });
 
+app.delete('/api/pages/:idPage', (req, res) => {
+    const idPage = req.params.idPage;
+    pagesDao.deletePage(idPage).then((result) => {
+        res.end();
+    }).catch((error) => {
+        res.status(500).send(error.message);
+    });
+});
+
+app.delete('/api/pages/:idPage/blocks/:idBlock', (req, res) => {
+    const idPage = req.params.idPage;
+    const idBlock = req.params.idBlock;
+    pagesDao.deleteBlock(idPage, idBlock).then((result) => {
+        res.end();
+    }).catch((error) => {
+        res.status(500).send(error.message);
+    });
+});
+
+app.put('/api/pages/:idPage', (req, res) => {
+    const idPage = req.params.idPage;
+    const page = new Page(null, req.body.title, req.body.idUser, req.body.creationDate.toISOString(), req.body.publicationDate.toISOString());
+    pagesDao.updatePage(idPage, page).then((result) => {
+        res.end();
+    }).catch((error) => {
+        res.status(500).send(error.message);
+    });
+});
+
+app.put('/api/pages/:idPage/blocks/:idBlock', (req, res) => {
+    const idPage = req.params.idPage;
+    const idBlock = req.params.idBlock;
+    const block = new Block(null, req.body.idPage, req.body.type, req.body.content, req.body.position);
+    pagesDao.updatePage(idPage, idBlock, block).then((result) => {
+        res.end();
+    }).catch((error) => {
+        res.status(500).send(error.message);
+    });
+});
+
 app.listen(PORT,
     () => { console.log(`Server started on http://localhost:${PORT}/`) });

@@ -60,7 +60,59 @@ function createBlock(block) {
     });
 }
 
+function deletePage(idPage) {
+    return new Promise((resolve, reject) => {
+        const sql = 'DELETE FROM pages WHERE id = ?';
+        db.run(sql, idPage, (err) => {
+            if(err)
+                reject(err);
+            else
+                resolve(true);
+        });
+    });
+}
+
+function deleteBlock(idPage, idBlock) {
+    return new Promise((resolve, reject) => {
+        const sql = 'DELETE FROM blocks WHERE id = ? AND idpage = ?';
+        db.run(sql, [idBlock, idPage], (err) => {
+            if(err)
+                reject(err);
+            else
+                resolve(true);
+        });
+    });
+}
+
+function updatePage(idPage, page) {
+    return new Promise((resolve, reject) => {
+        const sql = 'UPDATE pages SET title=?, iduser=?, creationdate=?, publicationdate=? WHERE id=?';
+        db.run(sql, [page.title, page.idUser, page.creationDate, page.publicationDate, idPage], (err) => {
+            if(err)
+                reject(err);
+            else
+                resolve(true);
+        });
+    });
+}
+
+function updateBlock(idPage, idBlock, block) {
+    return new Promise((resolve, reject) => {
+        const sql = 'UPDATE blocks SET idpage=?, type=?, content=?, position=? WHERE id=? AND idpage=?';
+        db.run(sql, [block.idPage, block.type, block.content, block.position, idPage, idBlock], (err) => {
+            if(err)
+                reject(err);
+            else
+                resolve(true);
+        });
+    });
+}
+
 exports.getAllPages = getAllPages;
 exports.getPageContent = getPageContent;
 exports.createPage = createPage;
 exports.createBlock = createBlock;
+exports.deletePage = deletePage;
+exports.deleteBlock = deleteBlock;
+exports.updatePage = updatePage;
+exports.updateBlock = updateBlock;
