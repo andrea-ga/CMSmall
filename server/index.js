@@ -12,7 +12,24 @@ app.use(express.json());
 app.use(cors());
 
 const pagesDao = require('./pages-dao');
-const {Page, Block} = require('./cms');
+const {Website, Page, Block} = require('./cms');
+
+app.get('/api/name', (req, res) => {
+    pagesDao.getWebsiteName().then((result) => {
+        res.json(result);
+    }).catch((error) => {
+        res.status(500).send(error.message);
+    });
+})
+
+app.put('/api/name', (req, res) => {
+    const website = new Website(null, req.body.title);
+    pagesDao.updateWebsiteName(website).then((result) => {
+        res.end();
+    }).catch((error) => {
+        res.status(500).send(error.message);
+    });
+})
 
 app.get('/api/pages', (req, res) => {
     pagesDao.getAllPages().then((result) => {

@@ -18,5 +18,11 @@ function Block(id, idPage, type, content, position) {
     this.position = position;
 }
 
+function Website(id, title) {
+    this.id = id;
+    this.title = title;
+}
+
 exports.Page = Page;
 exports.Block = Block;
+exports.Website = Website;

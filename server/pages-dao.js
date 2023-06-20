@@ -1,11 +1,37 @@
 'use strict';
 
-const {Page, Block} = require('./cms');
+const {Page, Block, Website} = require('./cms');
 
 const dayjs = require('dayjs');
 const sqlite = require('sqlite3');
 
 const db = require('./db');
+
+function getWebsiteName() {
+    return new Promise((resolve, reject) => {
+        const sql = 'SELECT * FROM website';
+        db.get(sql, (err, row) => {
+            if(err)
+                reject(err)
+            else {
+                const website = new Website(row.title);
+                resolve(website);
+            }
+        })
+    })
+}
+
+function updateWebsiteName(website) {
+    return new Promise((resolve, reject) => {
+        const sql = 'UPDATE website SET title=? WHERE id=?';
+        db.run(sql, [website.title, 1], (err, row) => {
+            if(err)
+                reject(err)
+            else
+                resolve(true);
+        })
+    })
+}
 
 function getAllPages() {
     return new Promise((resolve, reject) => {
@@ -118,3 +144,5 @@ exports.deletePage = deletePage;
 exports.deleteBlock = deleteBlock;
 exports.updatePage = updatePage;
 exports.updateBlock = updateBlock;
+exports.getWebsiteName = getWebsiteName;
+exports.updateWebsiteName = updateWebsiteName;

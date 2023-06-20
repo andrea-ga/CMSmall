@@ -2,6 +2,7 @@ import {Form, Button} from "react-bootstrap";
 import {useState} from "react";
 import {addPage} from "./API.js";
 import dayjs from "dayjs";
+import {Link} from "react-router-dom";
 
 function AddPage() {
     const [title, setTitle] = useState("");
@@ -24,20 +25,21 @@ function AddPage() {
             <Form.Control type = "text" name="text" placeholder="Enter Title" onChange={(ev) => {setTitle(ev.target.value)}}></Form.Control>
         </Form.Group>
         <Form.Group controlId="addAuthor">
-            <Form.Label className='fw-light'>Author</Form.Label>
-            <Form.Control type = "text" name="text" placeholder="Enter Author" onChange={(ev) => {setIdUser(ev.target.value)}}></Form.Control>
+            <Form.Label className='fw-light'>ID User</Form.Label>
+            <Form.Control type = "text" name="text" placeholder="Enter ID User" onChange={(ev) => {setIdUser(ev.target.value)}}></Form.Control>
         </Form.Group>
         <Form.Group controlId="addCreationDate">
-            <Form.Label className='fw-light'>Author</Form.Label>
+            <Form.Label className='fw-light'>Creation Date</Form.Label>
             <Form.Control type = "date" name="creationDate" placeholder="Enter Creation Date" onChange={(ev) => {setCreationDate(ev.target.value)}}></Form.Control>
         </Form.Group>
         <Form.Group controlId="addPublicationDate">
-            <Form.Label className='fw-light'>Author</Form.Label>
+            <Form.Label className='fw-light'>Publication Date</Form.Label>
             <Form.Control type = "date" name="publicationDate" placeholder="Enter Publication Date" onChange={(ev) => {setPublicationDate(ev.target.value)}}></Form.Control>
         </Form.Group>
         <Form.Group controlId="addButton">
             <Form.Label className='fw-light'>&nbsp;</Form.Label><br />
-            <Button variant='success' id="addbutton" onClick={handleAdd}>ADD</Button>
+            <Link to={`/`}><Button variant='success' id="addbutton" onClick={handleAdd}>ADD</Button></Link>
+            <Link to={`/`}><Button>CANCEL</Button></Link>
         </Form.Group>
     </div>
 }

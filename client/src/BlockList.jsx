@@ -1,7 +1,7 @@
-import {Card, CardGroup, Col, Row} from "react-bootstrap";
-import {useParams} from "react-router-dom";
+import {Button, Card, CardGroup, Col, Row} from "react-bootstrap";
+import {Link, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
-import {getBlocks, updateBlock} from "./API.js";
+import {deleteBlock, deletePage, getBlocks, updateBlock} from "./API.js";
 
 function BlockList(props) {
     const {idPage} = useParams();
@@ -16,7 +16,7 @@ function BlockList(props) {
         })
     }, [idPage]);
 
-    const page = props.pages.filter((p) => (p.id === Number(idPage)))[0];
+    const page = props.pages.filter((p) => (p.id == idPage))[0];
 
     async function changePosUp(idBlock, type, content, position) {
         try {
@@ -60,6 +60,16 @@ function BlockList(props) {
         }
     }
 
+    async function handleDelete(idPage, idBlock) {
+        try {
+            setBlocks(blocks.filter((b) => b.id != idBlock && b.idPage == idPage));
+
+            await deleteBlock(idPage, idBlock);
+        } catch(error) {
+            console.log(error);
+        }
+    }
+
     return <div>
         <PageInfo page={page} />
         <CardGroup>
@@ -71,9 +81,12 @@ function BlockList(props) {
                     <Card.Title>TYPE: {b.type}</Card.Title>
                     <Card.Subtitle>CONTENT: {b.content}</Card.Subtitle>
                     <Card.Subtitle>POSITION: {b.position}</Card.Subtitle>
+                    <Link to={`/pages/${idPage}/blocks/${b.id}/edit`}><Button>EDIT BLOCK</Button></Link>
+                    <Link to={`/pages/${idPage}`}><Button onClick={() => handleDelete(b.idPage, b.id)}>DELETE BLOCK</Button></Link>
                 </Card.Body>
             </Card>
         ))}
+            <Link to={`/pages/${idPage}/blocks/add`}><Button>Add Block</Button></Link>
     </CardGroup>
     </div>
 }
@@ -88,4 +101,4 @@ function PageInfo(props) {
     </div>
 }
 
-export {BlockList};
+export {BlockList, PageInfo};
