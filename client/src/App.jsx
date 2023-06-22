@@ -3,12 +3,12 @@ import { BrowserRouter, Link, Outlet, Route, Routes } from 'react-router-dom';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {useContext, useEffect, useState} from "react";
-import {checkLogin, doLogout, getAllPages, getPages, getWebsiteName, updateWebsiteName} from './API';
+import {checkLogin, deletePage, doLogout, getAllPages, getPages, getWebsiteName, updateWebsiteName} from './API';
 import { PagesList } from "./PagesList";
 import { BlockList } from "./BlockList.jsx";
 import { AddPage } from "./AddPage.jsx";
 import { EditPage } from "./EditPage.jsx";
-import {AddBlock} from "./AddBlock.jsx";
+import {AddBlock, AddBlockNew} from "./AddBlock.jsx";
 import {EditBlock} from "./EditBlock.jsx";
 import {LoginForm} from "./Login.jsx";
 import UserContext from "./UserContext.js";
@@ -55,11 +55,21 @@ function App() {
         }
     }
 
+    async function handleDelete(idPage) {
+        try {
+            setPages((old) => old.filter((p) => p.id != idPage));
+
+            await deletePage(idPage);
+        } catch(error) {
+            console.log(error);
+        }
+    }
+
     return <UserContext.Provider value={user}>
     <BrowserRouter>
         <Routes>
             <Route element={<MainLayout handleLogout={handleLogout} handleChangeName={handleChangeName} title={title} setTitle={setTitle} editMode={editMode} setEditMode={setEditMode} />}>
-                <Route index element={<PagesList pages={pages} setPages={setPages} />} />
+                <Route index element={<PagesList handleDelete={handleDelete} pages={pages} setPages={setPages} />} />
                 <Route path='/login' element={<LoginForm validateLogin={validateLogin}/>}/>
                 <Route path='/pages/:idPage'
                        element={<BlockList pages={pages} />} />

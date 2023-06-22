@@ -3,6 +3,9 @@ import {Link, useParams} from "react-router-dom";
 import {useContext, useEffect, useState} from "react";
 import {deleteBlock, getBlocks, getPubBlocks, updateBlock} from "./API.js";
 import UserContext from "./UserContext.js";
+import circle from "../img/circle.png";
+import point from "../img/point.png";
+import phone from "../img/phone.png";
 
 function BlockList(props) {
     const user = useContext(UserContext);
@@ -88,7 +91,10 @@ function BlockList(props) {
                     {user.id && <div><Card.Header><p onClick={() => {changePosUp(b.id, b.type, b.content, b.position)}}>↑</p></Card.Header>
                         <Card.Header><p onClick={() => {changePosDown(b.id, b.type, b.content, b.position)}}>↓</p></Card.Header></div>}
                     <Card.Title>TYPE: {b.type}</Card.Title>
-                    <Card.Subtitle>CONTENT: {b.content}</Card.Subtitle>
+                    {b.type === "image" && b.content === "circle" ? <Card.Subtitle><img src={circle} alt={b.content}/></Card.Subtitle> : ""}
+                    {b.type === "image" && b.content === "point" ? <Card.Subtitle><img src={point} alt={b.content}/></Card.Subtitle> : ""}
+                    {b.type === "image" && b.content === "phone" ? <Card.Subtitle><img src={phone} alt={b.content}/></Card.Subtitle> : ""}
+                    {b.type !== "image" ? <Card.Subtitle>CONTENT: {b.content}</Card.Subtitle> : ""}
                     <Card.Subtitle>POSITION: {b.position}</Card.Subtitle>
                     {user.id && <div><Link to={`/pages/${idPage}/blocks/${b.id}/edit`}><Button>EDIT BLOCK</Button></Link>
                         <Link to={`/pages/${idPage}`}><Button onClick={() => handleDelete(b.idPage, b.id)}>DELETE BLOCK</Button></Link></div>}

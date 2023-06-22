@@ -1,21 +1,11 @@
 import { Card, CardGroup, Button } from 'react-bootstrap';
 import {useContext, useEffect, useState} from "react";
-import {deletePage, getBlocks, getPubBlocks} from "./API.js";
+import {getBlocks, getPubBlocks} from "./API.js";
 import {Link} from "react-router-dom";
 import UserContext from "./UserContext.js";
 
 function PagesList(props) {
     const user = useContext(UserContext);
-
-    async function handleDelete(idPage) {
-        try {
-            props.setPages((old) => old.filter((p) => p.id != idPage));
-
-            await deletePage(idPage);
-        } catch(error) {
-            console.log(error);
-        }
-    }
 
     return <div>
     <CardGroup>
@@ -29,7 +19,7 @@ function PagesList(props) {
                     <Card.Text><PageDetails idPage={p.id} /></Card.Text>
                     <Card.Footer><Link to={`/pages/${p.id}`}>details...</Link></Card.Footer>
                     {user.id && <div><Card.Footer><Link to={`/pages/${p.id}/edit`}>Edit Page</Link></Card.Footer>
-                        <Card.Footer><Link to={`/`}><Button onClick={() => handleDelete(p.id)}>Delete Page</Button></Link></Card.Footer></div>}
+                        <Card.Footer><Link to={`/`}><Button onClick={() => props.handleDelete(p.id)}>Delete Page</Button></Link></Card.Footer></div>}
                 </Card.Body>
             </Card>
         ))}
