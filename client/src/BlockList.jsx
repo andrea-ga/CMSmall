@@ -1,20 +1,29 @@
 import {Button, Card, CardGroup, Col, Row} from "react-bootstrap";
 import {Link, useParams} from "react-router-dom";
-import {useEffect, useState} from "react";
-import {deleteBlock, deletePage, getBlocks, updateBlock} from "./API.js";
+import {useContext, useEffect, useState} from "react";
+import {deleteBlock, getBlocks, getPubBlocks, updateBlock} from "./API.js";
+import UserContext from "./UserContext.js";
 
 function BlockList(props) {
+    const user = useContext(UserContext);
     const {idPage} = useParams();
 
     const [blocks, setBlocks] = useState([]);
     const [waiting, setWaiting] = useState(true);
 
     useEffect(() => {
-        getBlocks(idPage).then((list) => {
-            setBlocks(list);
-            setWaiting(false);
-        })
-    }, [idPage]);
+        if(user.id) {
+            getBlocks(idPage).then((list) => {
+                setBlocks(list);
+                setWaiting(false);
+            })
+        } else {
+            getPubBlocks(idPage).then((list) => {
+                setBlocks(list);
+                setWaiting(false);
+            })
+        }
+    }, [idPage, user]);
 
     const page = props.pages.filter((p) => (p.id == idPage))[0];
 
@@ -76,17 +85,18 @@ function BlockList(props) {
         {blocks.sort((a,b) => (a.position - b.position)).map((b) => (
             <Card key={b.id}>
                 <Card.Body>
-                    <Card.Header><p onClick={() => {changePosUp(b.id, b.type, b.content, b.position)}}>↑</p></Card.Header>
-                    <Card.Header><p onClick={() => {changePosDown(b.id, b.type, b.content, b.position)}}>↓</p></Card.Header>
+                    {user.id && <div><Card.Header><p onClick={() => {changePosUp(b.id, b.type, b.content, b.position)}}>↑</p></Card.Header>
+                        <Card.Header><p onClick={() => {changePosDown(b.id, b.type, b.content, b.position)}}>↓</p></Card.Header></div>}
                     <Card.Title>TYPE: {b.type}</Card.Title>
                     <Card.Subtitle>CONTENT: {b.content}</Card.Subtitle>
                     <Card.Subtitle>POSITION: {b.position}</Card.Subtitle>
-                    <Link to={`/pages/${idPage}/blocks/${b.id}/edit`}><Button>EDIT BLOCK</Button></Link>
-                    <Link to={`/pages/${idPage}`}><Button onClick={() => handleDelete(b.idPage, b.id)}>DELETE BLOCK</Button></Link>
+                    {user.id && <div><Link to={`/pages/${idPage}/blocks/${b.id}/edit`}><Button>EDIT BLOCK</Button></Link>
+                        <Link to={`/pages/${idPage}`}><Button onClick={() => handleDelete(b.idPage, b.id)}>DELETE BLOCK</Button></Link></div>}
                 </Card.Body>
             </Card>
         ))}
-            <Link to={`/pages/${idPage}/blocks/add`}><Button>Add Block</Button></Link>
+            {user.id && <Link to={`/pages/${idPage}/blocks/add`}><Button>Add Block</Button></Link>}
+            <Link to={`/`}><Button>Go Back</Button></Link>
     </CardGroup>
     </div>
 }

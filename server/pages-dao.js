@@ -47,6 +47,20 @@ function getAllPages() {
     });
 }
 
+function getPages() {
+    return new Promise((resolve, reject) => {
+        const sql = 'SELECT * FROM pages WHERE DATE() >= publicationDate';
+        db.all(sql, (err, rows) => {
+            if (err)
+                reject(err);
+            else {
+                const pages = rows.map(row => new Page(row.id, row.title, row.iduser, row.creationdate, row.publicationdate));
+                resolve(pages);
+            }
+        });
+    });
+}
+
 function getPageContent(idPage) {
     return new Promise((resolve, reject) => {
         const sql = 'SELECT * FROM blocks WHERE idpage = ?';
@@ -61,10 +75,24 @@ function getPageContent(idPage) {
     });
 }
 
+function getPubPageContent(idPage) {
+    return new Promise((resolve, reject) => {
+        const sql = 'SELECT * FROM blocks WHERE idpage = ? AND idpage IN (SELECT id FROM pages WHERE DATE() >= publicationDate)';
+        db.all(sql, idPage, (err, rows) => {
+            if (err)
+                reject(err);
+            else {
+                const blocks = rows.map(row => new Block(row.id, row.idpage, row.type, row.content, row.position));
+                resolve(blocks);
+            }
+        });
+    });
+}
+
 function createPage(page) {
     return new Promise((resolve, reject) => {
         const sql = 'INSERT INTO pages(title, iduser, creationdate, publicationdate) VALUES (?,?,?,?)';
-        db.run(sql, [page.title, page.idUser, page.creationDate.toISOString(), page.publicationDate.toISOString()]
+        db.run(sql, [page.title, page.idUser, page.creationDate.toISOString(), page.publicationDate ?  page.publicationDate.toISOString() : null]
             , (err) => {
                 if(err) {
                     console.log(err);
@@ -137,7 +165,9 @@ function updateBlock(idPage, idBlock, block) {
 }
 
 exports.getAllPages = getAllPages;
+exports.getPages = getPages;
 exports.getPageContent = getPageContent;
+exports.getPubPageContent = getPubPageContent;
 exports.createPage = createPage;
 exports.createBlock = createBlock;
 exports.deletePage = deletePage;

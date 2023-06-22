@@ -9,7 +9,6 @@ function EditPage(props) {
 
     const [title, setTitle] = useState("");
     const [idUser, setIdUser] = useState("");
-    const [creationDate, setCreationDate] = useState("");
     const [publicationDate, setPublicationDate] = useState("");
 
     async function handleEdit() {
@@ -23,8 +22,6 @@ function EditPage(props) {
                         newP = {...newP, title: title};
                     if(idUser !== "")
                         newP = {...newP, idUser: idUser};
-                    if(creationDate !== "")
-                        newP = {...newP, creationDate: creationDate};
                     if(publicationDate !== "")
                         newP = {...newP, publicationDate: publicationDate};
 
@@ -51,8 +48,6 @@ function EditPage(props) {
                             <Form.Control type="text" defaultValue={p.title} onChange={(ev) => setTitle(ev.target.value)}></Form.Control>
                             <Form.Label>ID USER</Form.Label>
                             <Form.Control type="text" defaultValue={p.idUser} onChange={(ev) => setIdUser(ev.target.value)}></Form.Control>
-                            <Form.Label>Creation Date</Form.Label>
-                            <Form.Control type="date" defaultValue={p.creationDate} onChange={(ev) => setCreationDate(ev.target.value)}></Form.Control>
                             <Form.Label>Publication Date</Form.Label>
                             <Form.Control type="date" defaultValue={p.publicationDate} onChange={(ev) => setPublicationDate(ev.target.value)}></Form.Control>
                             <Card.Footer><Link to={`/`}><Button onClick={handleEdit}>Update</Button></Link></Card.Footer>
