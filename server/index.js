@@ -151,7 +151,7 @@ app.post('/api/pages', isLoggedIn, (req, res) => {
     pagesDao.createPage(page).then((result) => {
         req.body.blocks.map((b) => {
             pagesDao.getAllPages().then((pages) => {
-                const idPage = pages.sort((a,b) => (b.id - a.id))[0];
+                const idPage = pages.sort((a,b) => (b.id - a.id))[0].id;
                 const block = new Block(null, idPage, b.type, b.content, b.position);
                 pagesDao.createBlock(block).then((result) => {
                     res.end();

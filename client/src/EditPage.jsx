@@ -1,4 +1,4 @@
-import {Button, Card, CardGroup, Form} from "react-bootstrap";
+import {Button, Card, Form, Nav} from "react-bootstrap";
 import {Link, useParams} from "react-router-dom";
 import {GetAuthor, PageDetails} from "./PagesList.jsx";
 import {getAllAuthors, updatePage} from "./API.js";
@@ -26,7 +26,7 @@ function EditPage(props) {
                 if(idUser !== "")
                     newP = {...newP, idUser: idUser};
                 if(publicationDate !== "")
-                    newP = {...newP, publicationDate: dayjs(publicationDate).format("MM/DD/YY")};
+                    newP = {...newP, publicationDate: dayjs(publicationDate).format("YYYY-MM-DD")};
 
                 return newP;
             }
@@ -39,50 +39,75 @@ function EditPage(props) {
     }
 
     return <div>
-        <CardGroup>
-            {props.pages.map((p) => {
-                lastId = p.id;
+        {user.id && <Card key={lastId+1}>
+            <div>
+                <Form.Group controlId="addTitle">
+                    <Form.Label className='fw-light'>Title</Form.Label>
+                    <Form.Control type = "text" name="text" placeholder="Enter Title" onChange={(ev) => {setTitle(ev.target.value)}}></Form.Control>
+                </Form.Group>
+                <Form.Group controlId="addPublicationDate">
+                    <Form.Label className='fw-light'>Publication Date</Form.Label>
+                    <Form.Control type = "date" name="publicationDate" placeholder="Enter Publication Date" onChange={(ev) => {setPublicationDate(ev.target.value)}}></Form.Control>
+                </Form.Group>
+                <Link to={`/pages/add`} state={{title: title, publicationDate: publicationDate}}><Button>Add New Page</Button></Link>
+            </div>
+        </Card>}
+        <br/>
+        {props.pages.sort((a,b) => (user.id ? (dayjs(a.creationDate).isAfter(dayjs(b.creationDate))) : (dayjs(a.publicationDate).isAfter(dayjs(b.publicationDate))))).map((p) => {
+            lastId = p.id;
 
-                if(p.id == idPage) {
-                    return <Card key={p.id}>
+            if(p.id == idPage) {
+                return <div key={p.id}>
+                    <Card>
+                        <Card.Header>
+                            <Nav variant="tabs">
+                                <Nav.Item>
+                                    <Form.Control type="text" defaultValue={p.title} onChange={(ev) => setTitle(ev.target.value)}></Form.Control>
+                                </Nav.Item>
+                                {(user.id == p.idUser || user.role === "admin") && <Nav.Item>
+                                    <Link to={`/`}><Button variant ="danger" onClick={() => props.handleDelete(p.id)}>Delete</Button></Link>
+                                </Nav.Item>}
+                            </Nav>
+                        </Card.Header>
                         <Card.Body>
-                            <Form.Label>TITLE</Form.Label>
-                            <Form.Control type="text" defaultValue={p.title} onChange={(ev) => setTitle(ev.target.value)}></Form.Control>
-                            {user.role === "admin" && <div><Form.Label>Author</Form.Label>
-                                <GetAllAuthors idPage={p.id} setIdUser={setIdUser} /></div>}
-                            <Form.Label>Publication Date</Form.Label>
-                            <Form.Control type="date" defaultValue={p.publicationDate} onChange={(ev) => setPublicationDate(ev.target.value)}></Form.Control>
-                            <Card.Footer><Link to={`/`}><Button onClick={handleEdit}>Update</Button></Link></Card.Footer>
-                            <Card.Footer><Link to={`/`}><Button>Cancel</Button></Link></Card.Footer>
+                            <Card.Footer>{user.role === "admin" && <div><Form.Label>Author</Form.Label>
+                                <GetAllAuthors idPage={p.id} setIdUser={setIdUser} /></div>}</Card.Footer>
+                            <Card.Footer><Form.Label>Publication Date</Form.Label>
+                                <Form.Control type="date" defaultValue={p.publicationDate} onChange={(ev) => setPublicationDate(ev.target.value)}></Form.Control></Card.Footer>
+                            <Card.Footer><Link to={`/`}><Button onClick={handleEdit}>Update</Button></Link>
+                                         <Link to={`/`}><Button>Cancel</Button></Link></Card.Footer>
                         </Card.Body>
                     </Card>
-                } else {
-                    return <Card key={p.id}>
-                        <Card.Body><Card.Title>TITLE: {p.title}</Card.Title>
-                        <GetAuthor idUser={p.idUser} />
-                        <Card.Subtitle>Creation Date: {p.creationDate}</Card.Subtitle>
-                        <Card.Subtitle>Publication Date: {p.publicationDate}</Card.Subtitle>
+                    <br/></div>
+            } else {
+                return  <div key={p.id}>
+                <Card>
+                    <Card.Header>
+                        <Nav variant="tabs">
+                            <Nav.Item>
+                                <Link to={`/pages/${p.id}`}><h3>{p.title}</h3></Link>
+                            </Nav.Item>
+                            <Nav.Item>
+
+                            </Nav.Item>
+                            {(user.id == p.idUser || user.role === "admin") && <Nav.Item>
+                                <Link to={`/pages/${p.id}/edit`}><Button>Edit</Button></Link>
+                            </Nav.Item>}
+                            {(user.id == p.idUser || user.role === "admin") && <Nav.Item>
+                                <Link to={`/`}><Button variant ="danger" onClick={() => props.handleDelete(p.id)}>Delete</Button></Link>
+                            </Nav.Item>}
+                        </Nav>
+                    </Card.Header>
+                    <Card.Body>
                         <Card.Text><PageDetails idPage={p.id}/></Card.Text>
-                        <Card.Footer><Link to={`/pages/${p.id}`}>details...</Link></Card.Footer>
-                            {(user.id == p.idUser || user.role === "admin") && <Card.Footer><Link to={`/pages/${p.id}/edit`}>Edit Page</Link></Card.Footer>}
-                        </Card.Body>
-                    </Card>
-                }
-            })}
-            {user.id && <Card key={lastId+1}>
-                <div>
-                    <Form.Group controlId="addTitle">
-                        <Form.Label className='fw-light'>Title</Form.Label>
-                        <Form.Control type = "text" name="text" placeholder="Enter Title" onChange={(ev) => {setTitle(ev.target.value)}}></Form.Control>
-                    </Form.Group>
-                    <Form.Group controlId="addPublicationDate">
-                        <Form.Label className='fw-light'>Publication Date</Form.Label>
-                        <Form.Control type = "date" name="publicationDate" placeholder="Enter Publication Date" onChange={(ev) => {setPublicationDate(ev.target.value)}}></Form.Control>
-                    </Form.Group>
-                    <Link to={`/pages/add`} state={{title: title, publicationDate: publicationDate}}><Button>ADD</Button></Link>
-                </div>
-            </Card>}
-        </CardGroup>
+                        <Card.Footer><GetAuthor idUser={p.idUser} /></Card.Footer>
+                        <Card.Footer><p>Published: {p.publicationDate} Created: {p.creationDate}</p></Card.Footer>
+                    </Card.Body>
+                </Card>
+                <br/></div>
+            }
+        }
+        )}
     </div>
 }
 

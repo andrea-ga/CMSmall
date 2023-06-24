@@ -38,9 +38,6 @@ function PagesList(props) {
                             <Nav.Item>
                                 <Link to={`/pages/${p.id}`}><h3>{p.title}</h3></Link>
                             </Nav.Item>
-                            <Nav.Item>
-
-                            </Nav.Item>
                             {(user.id == p.idUser || user.role === "admin") && <Nav.Item>
                                 <Link to={`/pages/${p.id}/edit`}><Button>Edit</Button></Link>
                             </Nav.Item>}
