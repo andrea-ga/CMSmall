@@ -30,55 +30,46 @@ function BlockList(props) {
     const page = props.pages.filter((p) => (p.id == idPage))[0];
 
     async function changePosUp(idBlock, type, content, position) {
-        try {
-            if(position !== 1) {
-                setBlocks((old) => old.map(b => (b.position === position-1 ? {...b, position: b.position+1} : b)));
-                for(const b of blocks)
-                    if(b.position === position-1)
-                        await updateBlock(b.idPage, b.id, b.type, b.content, b.position+1);
+        if(position !== 1) {
+            setBlocks((old) => old.map(b => (b.position === position-1 ? {...b, position: b.position+1} : b)));
+            for(const b of blocks)
+                if(b.position === position-1)
+                    await updateBlock(b.idPage, b.id, b.type, b.content, b.position+1);
 
-                setBlocks((old) => old.map(b => (b.id === idBlock ? {...b, position: b.position-1} : b)));
-                await updateBlock(idPage, idBlock, type, content, position-1);
-            }
-        } catch(error) {
-            console.log(error);
+            setBlocks((old) => old.map(b => (b.id === idBlock ? {...b, position: b.position-1} : b)));
+            await updateBlock(idPage, idBlock, type, content, position-1);
         }
     }
 
     async function changePosDown(idBlock, type, content, position) {
-        try {
-            if(position !== blocks.length) {
-                setBlocks((old) => old.map(b => (b.position === position+1 ? {...b, position: b.position-1} : b)));
-                for(const b of blocks)
-                    if(b.position === position+1)
-                        await updateBlock(b.idPage, b.id, b.type, b.content, b.position-1);
+        if(position !== blocks.length) {
+            setBlocks((old) => old.map(b => (b.position === position+1 ? {...b, position: b.position-1} : b)));
+            for(const b of blocks)
+                if(b.position === position+1)
+                    await updateBlock(b.idPage, b.id, b.type, b.content, b.position-1);
 
-                setBlocks((old) => old.map(b => (b.id === idBlock ? {...b, position: b.position+1} : b)));
-                await updateBlock(idPage, idBlock, type, content, position+1);
-            }
-        } catch(error) {
-            console.log(error);
+            setBlocks((old) => old.map(b => (b.id === idBlock ? {...b, position: b.position+1} : b)));
+            await updateBlock(idPage, idBlock, type, content, position+1);
         }
     }
 
-    async function handleDelete(idPage, idBlock) {
-        try {
-            const header = blocks.find((b) => b.id != idBlock && b.type === "header");
-            const parOrImg = blocks.find((b) => b.id != idBlock && (b.type === "paragraph" || b.type === "image"));
+    async function handleDelete(block) {
+        const header = blocks.find((b) => b.id != block.id && b.type === "header");
+        const parOrImg = blocks.find((b) => b.id != block.id && (b.type === "paragraph" || b.type === "image"));
 
-            if(header && parOrImg) {
-                setBlocks(blocks.filter((b) => b.id != idBlock && b.idPage == idPage));
+        if(header && parOrImg) {
+            const pos = block.position;
+            setBlocks(blocks.filter((b) => b.id != block.id && b.idPage == block.idPage));
+            setBlocks((old) => (old.map(b => b.position > pos  ? {...b, position: b.position-1} : b)));
 
-                await deleteBlock(idPage, idBlock);
-            } else {
-                setErrMsg("PAGE MUST HAVE AT LEAST ONE HEADER TOGETHER WITH A PARAGRAPH OR IMAGE");
-            }
-        } catch(error) {
-            console.log(error);
+            await deleteBlock(block.idPage, block.id);
+        } else {
+            setErrMsg("PAGE MUST HAVE AT LEAST ONE HEADER TOGETHER WITH A PARAGRAPH OR IMAGE");
         }
     }
 
     return <div>
+        {errMsg && <p>{errMsg}</p>}
         <PageInfo page={page} />
         <CardGroup>
             {blocks.sort((a,b) => (a.position - b.position)).map((b) => (
@@ -94,14 +85,13 @@ function BlockList(props) {
                         {b.type !== "image" ? <Card.Subtitle>CONTENT: {b.content}</Card.Subtitle> : ""}
                         <Card.Subtitle>POSITION: {b.position}</Card.Subtitle>
                         {(user.id == page.idUser || user.role === "admin") && <div><Link to={`/pages/${idPage}/blocks/${b.id}/edit`}><Button>EDIT BLOCK</Button></Link>
-                            <Link to={`/pages/${idPage}`}><Button onClick={() => handleDelete(b.idPage, b.id)}>DELETE BLOCK</Button></Link></div>}
+                            <Link to={`/pages/${idPage}`}><Button onClick={() => handleDelete(b)}>DELETE BLOCK</Button></Link></div>}
                     </Card.Body>
                 </Card>
             ))}
             {(user.id == page.idUser || user.role === "admin") && <Link to={`/pages/${idPage}/blocks/add`}><Button>Add Block</Button></Link>}
             <Link to={`/`}><Button>Go Back</Button></Link>
         </CardGroup>
-        {errMsg}
     </div>
 }
 

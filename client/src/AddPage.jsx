@@ -92,36 +92,28 @@ function AddPage(props) {
     }
 
     async function changePosUp(idBlock, type, content, position) {
-        try {
-            if(position !== 1) {
-                setBlocks((old) => old.map(b => (b.position === position-1 ? {...b, position: b.position+1} : b)));
-                setBlocks((old) => old.map(b => (b.id === idBlock ? {...b, position: b.position-1} : b)));
-            }
-        } catch(error) {
-            console.log(error);
+        if(position !== 1) {
+            setBlocks((old) => old.map(b => (b.position === position-1 ? {...b, position: b.position+1} : b)));
+            setBlocks((old) => old.map(b => (b.id === idBlock ? {...b, position: b.position-1} : b)));
         }
     }
 
     async function changePosDown(idBlock, type, content, position) {
-        try {
-            if(position !== blocks.length) {
-                setBlocks((old) => old.map(b => (b.position === position+1 ? {...b, position: b.position-1} : b)));
-                setBlocks((old) => old.map(b => (b.id === idBlock ? {...b, position: b.position+1} : b)));
-            }
-        } catch(error) {
-            console.log(error);
+        if(position !== blocks.length) {
+            setBlocks((old) => old.map(b => (b.position === position+1 ? {...b, position: b.position-1} : b)));
+            setBlocks((old) => old.map(b => (b.id === idBlock ? {...b, position: b.position+1} : b)));
         }
     }
 
-    async function handleDelete(idBlock) {
-        try {
-            setBlocks(blocks.filter((b) => b.id != idBlock));
-        } catch(error) {
-            console.log(error);
-        }
+    async function handleDelete(block) {
+        const pos = block.position;
+
+        setBlocks(blocks.filter((b) => b.id != block.id));
+        setBlocks((old) => (old.map(b => b.position > pos ? {...b, position: b.position-1} : b)));
     }
 
     return <div>
+        {errMsg && <p>{errMsg}</p>}
         <div>
             <Row>
                 <Col md={8}>
@@ -156,13 +148,12 @@ function AddPage(props) {
                         </Form.Select> : ""}
                     </Form.Group>
                     </Card.Body>
-                     <Button onClick={() => handleDelete(b.id)}>DELETE BLOCK</Button>
+                     <Button onClick={() => handleDelete(b)}>DELETE BLOCK</Button>
                 </Card>
             ))}
             {user.id && <Button onClick={handleAdd}>ADD PAGE</Button>}
             <Link to={`/`}><Button>CANCEL</Button></Link>
         </CardGroup>
-        {errMsg}
     </div>
 }
 

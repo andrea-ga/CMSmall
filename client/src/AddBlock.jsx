@@ -18,19 +18,16 @@ function AddBlock() {
     }, [idPage]);
 
     async function handleAdd() {
-        try {
-            if (content !== "") {
-                await addBlock(idPage, type, content, position);
-                navigate(`/pages/${idPage}`);
-            }
-            else
-                setErrMsg("Content is empty!");
-        } catch (error) {
-            console.log(error);
+        if (content !== "") {
+            await addBlock(idPage, type, content, position);
+            navigate(`/pages/${idPage}`);
         }
+        else
+            setErrMsg("Content is empty");
     }
 
     return <div>
+        {errMsg && <p>{errMsg}</p>}
         <Form.Group controlId="addType">
             <Form.Label className='fw-light'>Type</Form.Label>
             <Form.Select aria-label="Type select" onChange={(ev) => (setType(ev.target.value))}>
@@ -55,7 +52,6 @@ function AddBlock() {
             <Button variant='success' id="addbutton" onClick={handleAdd}>ADD</Button>
             <Link to={`/pages/${idPage}`}><Button>CANCEL</Button></Link>
         </Form.Group>
-        {errMsg}
     </div>
 }
 

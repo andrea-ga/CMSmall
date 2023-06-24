@@ -20,7 +20,7 @@ function LoginForm(props) {
         }
     }
 
-    return <Form>
+    return <div>{errMsg && <p>{errMsg}</p>}<Form>
         <Form.Group className="mb-3">
             <Form.Label>Email</Form.Label>
             <Form.Control type='email' placeholder='E-mail' value={username} onChange={(ev)=>{setUsername(ev.target.value)}}/>
@@ -31,8 +31,8 @@ function LoginForm(props) {
         </Form.Group >
         <Button variant="primary" type="button" onClick={handleSubmit}>Submit</Button>{' '}
         <Button variant="secondary" type="button" onClick={()=>{navigate('/')}}>Cancel</Button><br/>
-        {errMsg}
     </Form>
+    </div>
 
 }
 

@@ -12,6 +12,7 @@ import { AddBlock } from "./AddBlock.jsx";
 import { EditBlock } from "./EditBlock.jsx";
 import { LoginForm } from "./Login.jsx";
 import UserContext from "./UserContext.js";
+import {PageNotFound} from "./PageNotFound.jsx";
 
 function App() {
     const [pages, setPages] = useState([]);
@@ -47,34 +48,20 @@ function App() {
     }, [user]);
 
     async function handleChangeName() {
-        try {
-            await updateWebsiteName(title);
-        } catch (error) {
-            console.log(error);
-        } finally {
-            setEditMode(false);
-        }
+        await updateWebsiteName(title);
+        setEditMode(false);
     }
 
     async function handleCancelChangeName() {
-        try {
-            const t = await getWebsiteName();
-            setTitle(t.id);
-        } catch (error) {
-            console.log(error);
-        } finally {
-            setEditMode(false);
-        }
+        const t = await getWebsiteName();
+        setTitle(t.id);
+        setEditMode(false);
     }
 
     async function handleDelete(idPage) {
-        try {
-            setPages((old) => old.filter((p) => p.id != idPage));
+        setPages((old) => old.filter((p) => p.id != idPage));
 
-            await deletePage(idPage);
-        } catch(error) {
-            console.log(error);
-        }
+        await deletePage(idPage);
     }
 
     return <UserContext.Provider value={user}>
@@ -93,6 +80,7 @@ function App() {
                        element={<AddBlock />} />
                 <Route path='/pages/:idPage/blocks/:idBlock/edit'
                        element={<EditBlock pages={pages}/>} />
+                <Route path='*' element={<PageNotFound />} />
             </Route>
         </Routes>
     </BrowserRouter>

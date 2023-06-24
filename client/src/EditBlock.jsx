@@ -24,28 +24,24 @@ function EditBlock(props) {
     const page = props.pages.filter((p) => (p.id == idPage))[0];
 
     async function handleEdit() {
-        try {
-            let newB = "";
-            setBlocks(blocks.map(b => {
-                if(b.id == idBlock && b.idPage == idPage) {
-                    newB = b;
+        let newB = "";
+        setBlocks(blocks.map(b => {
+            if(b.id == idBlock && b.idPage == idPage) {
+                newB = b;
 
-                    if(type !== "")
-                        newB = {...newB, type: type};
-                    if(content !== "")
-                        newB = {...newB, content: content};
+                if(type !== "")
+                    newB = {...newB, type: type};
+                if(content !== "")
+                    newB = {...newB, content: content};
 
-                    return newB;
-                }
-                else
-                    return b;
-            }));
+                return newB;
+            }
+            else
+                return b;
+        }));
 
-            if(newB !== "")
-                await updateBlock(idPage, idBlock, newB.type, newB.content, newB.position);
-        } catch (error) {
-            console.log(error);
-        }
+        if(newB !== "")
+            await updateBlock(idPage, idBlock, newB.type, newB.content, newB.position);
     }
 
     return <div>

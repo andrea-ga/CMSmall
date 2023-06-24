@@ -15,30 +15,26 @@ function EditPage(props) {
     let lastId;
 
     async function handleEdit() {
-        try {
-            let newP = "";
-            props.setPages((old) => old.map(p => {
-                if(p.id == idPage) {
-                    newP = p;
+        let newP = "";
+        props.setPages((old) => old.map(p => {
+            if(p.id == idPage) {
+                newP = p;
 
-                    if(title !== "")
-                        newP = {...newP, title: title};
-                    if(idUser !== "")
-                        newP = {...newP, idUser: idUser};
-                    if(publicationDate !== "")
-                        newP = {...newP, publicationDate: publicationDate};
+                if(title !== "")
+                    newP = {...newP, title: title};
+                if(idUser !== "")
+                    newP = {...newP, idUser: idUser};
+                if(publicationDate !== "")
+                    newP = {...newP, publicationDate: publicationDate};
 
-                    return newP;
-                }
-                else
-                    return p;
-            }));
+                return newP;
+            }
+            else
+                return p;
+        }));
 
-            if(newP !== "")
-                await updatePage(idPage, newP.title, newP.idUser, newP.creationDate, newP.publicationDate);
-        } catch (error) {
-            console.log(error);
-        }
+        if(newP !== "")
+            await updatePage(idPage, newP.title, newP.idUser, newP.creationDate, newP.publicationDate);
     }
 
     return <div>
