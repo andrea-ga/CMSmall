@@ -129,7 +129,7 @@ async function updateBlock(idPage, idBlock, type, content, position) {
     }
 }
 
-async function addPage(title, idUser, creationDate, publicationDate) {
+async function addPage(title, idUser, creationDate, publicationDate, blocks) {
     try {
         const response = await fetch(APIURL + `/pages`, {
             method: "POST",
@@ -141,7 +141,8 @@ async function addPage(title, idUser, creationDate, publicationDate) {
                 "title": title,
                 "idUser": idUser,
                 "creationDate": creationDate,
-                "publicationDate": publicationDate
+                "publicationDate": publicationDate,
+                "blocks": blocks
             })
         });
         if (response.ok) {

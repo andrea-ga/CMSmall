@@ -99,7 +99,7 @@ function MainLayout(props) {
                                 <Link to={`/`} style={{color: 'white'}} onClick={props.handleCancelChangeName}><Button>Cancel</Button></Link></div>
                             : <div><Link to='/' style={{ color: 'white', textDecoration: 'none' }}>{props.title}</Link>
                                 <Link to={`/`} style={{color: 'white'}} onClick={() => props.setEditMode(true)}>Edit Name</Link></div>}</div>
-                        : <Link to='/' style={{ color: 'white', textDecoration: 'none' }}>{props.title}</Link>}
+                            : <Link to='/' style={{ color: 'white', textDecoration: 'none' }}><h4>{props.title}</h4></Link>}
                     </Navbar.Brand>
                     <Navbar.Text>
                         {user.id ? <span>{user.username} <Link onClick={props.handleLogout}>Logout</Link></span>: <Link to='/login'>Login</Link>}

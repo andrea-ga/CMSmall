@@ -2,7 +2,7 @@ import {Button, Card, CardGroup, Col, Form, Row} from "react-bootstrap";
 import {useContext, useState} from "react";
 import UserContext from "./UserContext.js";
 import {Link, useLocation, useNavigate} from "react-router-dom";
-import {addBlock, addPage, getAllPages} from "./API.js";
+import {addPage, getAllPages} from "./API.js";
 import dayjs from "dayjs";
 
 function AddPage(props) {
@@ -28,15 +28,6 @@ function AddPage(props) {
                         if(bl2.type === "paragraph" || bl2.type === "image") {
                             parImgFound = true;
 
-                            await addPage(state.title, user.id, dayjs(), state.publicationDate);
-
-                            getAllPages().then((list) => {
-                                props.setPages(list.sort((a,b) => (b.creationDate - a.creationDate)));
-                            })
-
-                            const pages = await getAllPages();
-                            const idPage = pages.sort((a,b) => (b.id - a.id))[0].id;
-
                             for(const bl3 of blocks) {
                                 if(bl3.content === "") {
                                     setErrMsg("CONTENT IS EMPTY");
@@ -46,10 +37,12 @@ function AddPage(props) {
                             }
 
                             if(!contentEmpty) {
-                                for(const bl4 of blocks)
-                                    await addBlock(idPage, bl4.type, bl4.content, bl4.position);
+                                await addPage(state.title, user.id, dayjs(), state.publicationDate, blocks);
 
-                                navigate(`/pages/${idPage}`)
+                                getAllPages().then((list) => {
+                                    props.setPages(list);
+                                });
+                                navigate(`/`);
                             }
                         }
 

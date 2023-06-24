@@ -41,6 +41,7 @@ passport.deserializeUser(function (user, callback) {
 });
 
 const session = require('express-session');
+const {getAllPages} = require("./pages-dao");
 
 app.use(session({
     secret: "yyyyyyyyxxxxxxxzzzzzzz",
@@ -85,6 +86,7 @@ app.get('/api/users', isLoggedIn, (req, res) => {
     });
 })
 
+//GET WEBSITE NAME
 app.get('/api/name', (req, res) => {
     pagesDao.getWebsiteName().then((result) => {
         res.json(result);
@@ -93,6 +95,7 @@ app.get('/api/name', (req, res) => {
     });
 })
 
+//CHANGE WEBSITE NAME
 app.put('/api/name', isLoggedIn, (req, res) => {
     const website = new Website(null, req.body.title);
     pagesDao.updateWebsiteName(website).then((result) => {
@@ -102,6 +105,7 @@ app.put('/api/name', isLoggedIn, (req, res) => {
     });
 })
 
+//GET ALL PAGES (PUBLISHED AND NOT)
 app.get('/api/pages/all', isLoggedIn, (req, res) => {
     pagesDao.getAllPages().then((result) => {
         res.json(result);
@@ -110,6 +114,7 @@ app.get('/api/pages/all', isLoggedIn, (req, res) => {
     });
 });
 
+//GET ONLY PUBLISHED PAGES
 app.get('/api/pages', (req, res) => {
     pagesDao.getPages().then((result) => {
         res.json(result);
@@ -118,6 +123,7 @@ app.get('/api/pages', (req, res) => {
     });
 });
 
+//GET BLOCKS OF A PAGE (PUBLISHED AND NOT)
 app.get('/api/pages/:idPage', isLoggedIn, (req, res) => {
     const idPage = req.params.idPage;
 
@@ -128,6 +134,7 @@ app.get('/api/pages/:idPage', isLoggedIn, (req, res) => {
     });
 });
 
+//GET BLOCKS OF A PUBLISHED PAGE
 app.get('/api/pages/pub/:idPage', (req, res) => {
     const idPage = req.params.idPage;
 
@@ -138,16 +145,32 @@ app.get('/api/pages/pub/:idPage', (req, res) => {
     });
 });
 
+//ADD PAGE
 app.post('/api/pages', isLoggedIn, (req, res) => {
         const page = new Page(null, req.body.title, req.body.idUser, req.body.creationDate, req.body.publicationDate);
     pagesDao.createPage(page).then((result) => {
-        res.end();
+        req.body.blocks.map((b) => {
+            pagesDao.getAllPages().then((pages) => {
+                const idPage = pages.sort((a,b) => (b.id - a.id))[0];
+                const block = new Block(null, idPage, b.type, b.content, b.position);
+                pagesDao.createBlock(block).then((result) => {
+                    res.end();
+                }).catch((error) => {
+                    res.set('Content-Type: text/plain');
+                    res.status(500).send(error.message);
+                })
+            }).catch((error) => {
+                res.set('Content-Type: text/plain');
+                res.status(500).send(error.message);
+            });
+        });
     }).catch((error) => {
         res.set('Content-Type: text/plain');
         res.status(500).send(error.message);
     });
 });
 
+//ADD BLOCK TO A PAGE
 app.post('/api/pages/:idPage', isLoggedIn, (req, res) => {
     const block = new Block(null, req.params.idPage, req.body.type, req.body.content, req.body.position);
     pagesDao.createBlock(block).then((result) => {
@@ -158,6 +181,7 @@ app.post('/api/pages/:idPage', isLoggedIn, (req, res) => {
     });
 });
 
+//DELETE A PAGE
 app.delete('/api/pages/:idPage', isLoggedIn, (req, res) => {
     const idPage = req.params.idPage;
     pagesDao.deletePage(idPage).then((result) => {
@@ -167,6 +191,7 @@ app.delete('/api/pages/:idPage', isLoggedIn, (req, res) => {
     });
 });
 
+//DELETE A BLOCK FROM A PAGE
 app.delete('/api/pages/:idPage/blocks/:idBlock', isLoggedIn, (req, res) => {
     const idPage = req.params.idPage;
     const idBlock = req.params.idBlock;
@@ -177,6 +202,7 @@ app.delete('/api/pages/:idPage/blocks/:idBlock', isLoggedIn, (req, res) => {
     });
 });
 
+//UPDATE A PAGE
 app.put('/api/pages/:idPage', isLoggedIn, (req, res) => {
     const idPage = req.params.idPage;
         const page = new Page(null, req.body.title, req.body.idUser, req.body.creationDate, req.body.publicationDate);
@@ -187,6 +213,7 @@ app.put('/api/pages/:idPage', isLoggedIn, (req, res) => {
     });
 });
 
+//UPDATE A BLOCK OF A PAGE
 app.put('/api/pages/:idPage/blocks/:idBlock', isLoggedIn, (req, res) => {
     const idPage = req.params.idPage;
     const idBlock = req.params.idBlock;

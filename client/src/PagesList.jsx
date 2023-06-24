@@ -1,4 +1,4 @@
-import {Card, CardGroup, Button, Form} from 'react-bootstrap';
+import {Card, CardGroup, Button, Form, Nav} from 'react-bootstrap';
 import {useContext, useEffect, useState} from "react";
 import {getBlocks, getPubBlocks, getUsername} from "./API.js";
 import {Link} from "react-router-dom";
@@ -14,25 +14,6 @@ function PagesList(props) {
     let lastId;
 
     return <div>
-    <CardGroup>
-        {props.pages.sort((a,b) => (user.id ? (dayjs(a.creationDate).isAfter(dayjs(b.creationDate))) : (dayjs(a.publicationDate).isAfter(dayjs(b.publicationDate))))).map((p) => {
-            lastId = p.id;
-
-                return <Card key={p.id}>
-                    <Card.Body>
-                        <Card.Title>TITLE: {p.title}</Card.Title>
-                        <GetAuthor idUser={p.idUser} />
-                        <Card.Subtitle>Creation Date: {p.creationDate}</Card.Subtitle>
-                        <Card.Subtitle>Publication Date: {p.publicationDate}</Card.Subtitle>
-                        <Card.Text><PageDetails idPage={p.id}/></Card.Text>
-                        <Card.Footer><Link to={`/pages/${p.id}`}>details...</Link></Card.Footer>
-                        {(user.id == p.idUser || user.role === "admin") && <div><Card.Footer><Link to={`/pages/${p.id}/edit`}>Edit Page Info</Link></Card.Footer>
-                            <Card.Footer><Link to={`/`}><Button onClick={() => props.handleDelete(p.id)}>Delete
-                                Page</Button></Link></Card.Footer></div>}
-                    </Card.Body>
-                </Card>
-            }
-        )}
         {user.id && <Card key={lastId+1}>
             <div>
                 <Form.Group controlId="addTitle">
@@ -43,10 +24,40 @@ function PagesList(props) {
                     <Form.Label className='fw-light'>Publication Date</Form.Label>
                     <Form.Control type = "date" name="publicationDate" placeholder="Enter Publication Date" onChange={(ev) => {setPublicationDate(ev.target.value)}}></Form.Control>
                 </Form.Group>
-                <Link to={`/pages/add`} state={{title: title, publicationDate: publicationDate}}><Button>ADD</Button></Link>
+                <Link to={`/pages/add`} state={{title: title, publicationDate: publicationDate}}><Button>Add New Page</Button></Link>
             </div>
         </Card>}
-    </CardGroup>
+        <br/>
+        {props.pages.sort((a,b) => (user.id ? (dayjs(a.creationDate).isAfter(dayjs(b.creationDate))) : (dayjs(a.publicationDate).isAfter(dayjs(b.publicationDate))))).map((p) => {
+            lastId = p.id;
+
+                return <div key={p.id}>
+                    <Card>
+                    <Card.Header>
+                        <Nav variant="tabs">
+                            <Nav.Item>
+                                <Link to={`/pages/${p.id}`}><h3>{p.title}</h3></Link>
+                            </Nav.Item>
+                            <Nav.Item>
+
+                            </Nav.Item>
+                            {(user.id == p.idUser || user.role === "admin") && <Nav.Item>
+                                <Link to={`/pages/${p.id}/edit`}><Button>Edit</Button></Link>
+                            </Nav.Item>}
+                            {(user.id == p.idUser || user.role === "admin") && <Nav.Item>
+                                <Link to={`/`}><Button variant ="danger" onClick={() => props.handleDelete(p.id)}>Delete</Button></Link>
+                            </Nav.Item>}
+                        </Nav>
+                    </Card.Header>
+                    <Card.Body>
+                        <Card.Text><PageDetails idPage={p.id}/></Card.Text>
+                        <Card.Footer><GetAuthor idUser={p.idUser} /></Card.Footer>
+                        <Card.Footer><p>Published: {p.publicationDate} Created: {p.creationDate}</p></Card.Footer>
+                    </Card.Body>
+                </Card>
+            <br/></div>
+            }
+        )}
     </div>
 }
 
@@ -79,10 +90,11 @@ function PageDetails(props) {
     }, [props, user]);
 
     return <CardGroup>
-            {blocks.filter((b) => b.type === "paragraph").map((b) => (
+            {blocks.filter((b) => b.position == 1).map((b) => (
             <Card key={b.id}>
                 <Card.Body>
                     <Card.Title>{b.content}</Card.Title>
+                    <Card.Subtitle>...........</Card.Subtitle>
                 </Card.Body>
             </Card>
         ))}
