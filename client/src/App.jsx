@@ -34,11 +34,11 @@ function App() {
     useEffect(() => {
         if(user.id) {
             getAllPages().then((list) => {
-                setPages(list.sort((a,b) => (a.creationDate - b.creationDate)));
+                setPages(list);
             })
         } else {
             getPages().then((list) => {
-                setPages(list.sort((a,b) => (a.publicationDate - b.publicationDate)));
+                setPages(list);
             })
         }
 

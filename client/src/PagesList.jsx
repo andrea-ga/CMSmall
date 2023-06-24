@@ -3,6 +3,9 @@ import {useContext, useEffect, useState} from "react";
 import {getBlocks, getPubBlocks, getUsername} from "./API.js";
 import {Link} from "react-router-dom";
 import UserContext from "./UserContext.js";
+import dayjs from "dayjs";
+import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
+dayjs.extend(isSameOrAfter);
 
 function PagesList(props) {
     const user = useContext(UserContext);
@@ -12,7 +15,7 @@ function PagesList(props) {
 
     return <div>
     <CardGroup>
-        {props.pages.map((p) => {
+        {props.pages.sort((a,b) => (user.id ? (dayjs(a.creationDate).isAfter(dayjs(b.creationDate))) : (dayjs(a.publicationDate).isAfter(dayjs(b.publicationDate))))).map((p) => {
             lastId = p.id;
 
                 return <Card key={p.id}>

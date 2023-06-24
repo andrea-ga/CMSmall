@@ -6,8 +6,8 @@ function Page(id, title, idUser, creationDate, publicationDate) {
     this.id = id;
     this.title = title;
     this.idUser = idUser;
-    this.creationDate = dayjs(creationDate);
-    this.publicationDate = publicationDate ? dayjs(publicationDate) : publicationDate;
+    this.creationDate = dayjs(creationDate).format("MM/DD/YY");
+    this.publicationDate = publicationDate ? dayjs(publicationDate).format("MM/DD/YY") : publicationDate;
 }
 
 function Block(id, idPage, type, content, position) {

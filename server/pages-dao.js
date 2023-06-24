@@ -88,7 +88,7 @@ function getPubPageContent(idPage) {
 function createPage(page) {
     return new Promise((resolve, reject) => {
         const sql = 'INSERT INTO pages(title, iduser, creationdate, publicationdate) VALUES (?,?,?,?)';
-        db.run(sql, [page.title, page.idUser, page.creationDate.toISOString(), page.publicationDate ?  page.publicationDate.toISOString() : null]
+        db.run(sql, [page.title, page.idUser, page.creationDate, page.publicationDate ?  page.publicationDate : null]
             , (err) => {
                 if(err) {
                     console.log(err);
@@ -139,7 +139,7 @@ function deleteBlock(idPage, idBlock) {
 function updatePage(idPage, page) {
     return new Promise((resolve, reject) => {
         const sql = 'UPDATE pages SET title=?, iduser=?, creationdate=?, publicationdate=? WHERE id=?';
-        db.run(sql, [page.title, page.idUser, page.creationDate.toISOString(), page.publicationDate ? page.publicationDate.toISOString() : null, idPage], (err) => {
+        db.run(sql, [page.title, page.idUser, page.creationDate, page.publicationDate ? page.publicationDate : null, idPage], (err) => {
             if(err)
                 reject(err);
             else
