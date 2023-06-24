@@ -1,10 +1,6 @@
 'use strict';
 
 const {Page, Block, Website} = require('./cms');
-
-const dayjs = require('dayjs');
-const sqlite = require('sqlite3');
-
 const db = require('./db');
 
 function getWebsiteName() {
@@ -143,7 +139,7 @@ function deleteBlock(idPage, idBlock) {
 function updatePage(idPage, page) {
     return new Promise((resolve, reject) => {
         const sql = 'UPDATE pages SET title=?, iduser=?, creationdate=?, publicationdate=? WHERE id=?';
-        db.run(sql, [page.title, page.idUser, page.creationDate.toISOString(), page.publicationDate.toISOString(), idPage], (err) => {
+        db.run(sql, [page.title, page.idUser, page.creationDate.toISOString(), page.publicationDate ? page.publicationDate.toISOString() : null, idPage], (err) => {
             if(err)
                 reject(err);
             else

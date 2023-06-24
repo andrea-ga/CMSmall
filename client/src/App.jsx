@@ -8,9 +8,9 @@ import { PagesList } from "./PagesList";
 import { BlockList } from "./BlockList.jsx";
 import { AddPage } from "./AddPage.jsx";
 import { EditPage } from "./EditPage.jsx";
-import {AddBlock, AddBlockNew} from "./AddBlock.jsx";
-import {EditBlock} from "./EditBlock.jsx";
-import {LoginForm} from "./Login.jsx";
+import { AddBlock } from "./AddBlock.jsx";
+import { EditBlock } from "./EditBlock.jsx";
+import { LoginForm } from "./Login.jsx";
 import UserContext from "./UserContext.js";
 
 function App() {
@@ -25,6 +25,7 @@ function App() {
     }
 
     const handleLogout = async () => {
+        setEditMode(false);
         await doLogout() ;
         setUser({});
     }
@@ -32,11 +33,11 @@ function App() {
     useEffect(() => {
         if(user.id) {
             getAllPages().then((list) => {
-                setPages(list.sort((a,b) => (b.creationDate - a.creationDate)));
+                setPages(list.sort((a,b) => (a.creationDate - b.creationDate)));
             })
         } else {
             getPages().then((list) => {
-                setPages(list.sort((a,b) => (b.publicationDate - a.publicationDate)));
+                setPages(list.sort((a,b) => (a.publicationDate - b.publicationDate)));
             })
         }
 
@@ -48,6 +49,17 @@ function App() {
     async function handleChangeName() {
         try {
             await updateWebsiteName(title);
+        } catch (error) {
+            console.log(error);
+        } finally {
+            setEditMode(false);
+        }
+    }
+
+    async function handleCancelChangeName() {
+        try {
+            const t = await getWebsiteName();
+            setTitle(t.id);
         } catch (error) {
             console.log(error);
         } finally {
@@ -68,7 +80,7 @@ function App() {
     return <UserContext.Provider value={user}>
     <BrowserRouter>
         <Routes>
-            <Route element={<MainLayout handleLogout={handleLogout} handleChangeName={handleChangeName} title={title} setTitle={setTitle} editMode={editMode} setEditMode={setEditMode} />}>
+            <Route element={<MainLayout handleLogout={handleLogout} handleChangeName={handleChangeName} handleCancelChangeName={handleCancelChangeName} title={title} setTitle={setTitle} editMode={editMode} setEditMode={setEditMode} />}>
                 <Route index element={<PagesList handleDelete={handleDelete} pages={pages} setPages={setPages} />} />
                 <Route path='/login' element={<LoginForm validateLogin={validateLogin}/>}/>
                 <Route path='/pages/:idPage'
@@ -94,11 +106,12 @@ function MainLayout(props) {
             <Navbar sticky="top" variant='dark' bg="primary" expand="lg" className='mb-3'>
                 <Container>
                     <Navbar.Brand>
-                        {props.editMode ? <div><Form.Group><Form.Control defaultValue={props.title} onChange={(ev) => props.setTitle(ev.target.value)}></Form.Control></Form.Group>
+                        {user.role === "admin" ? <div>{props.editMode ? <div><Form.Group><Form.Control defaultValue={props.title} onChange={(ev) => props.setTitle(ev.target.value)}></Form.Control></Form.Group>
                                 <Link to={`/`} style={{color: 'white'}} onClick={props.handleChangeName}><Button>Update</Button></Link>
-                                <Link to={`/`} style={{color: 'white'}} onClick={() => props.setEditMode(false)}><Button>Cancel</Button></Link></div>
+                                <Link to={`/`} style={{color: 'white'}} onClick={props.handleCancelChangeName}><Button>Cancel</Button></Link></div>
                             : <div><Link to='/' style={{ color: 'white', textDecoration: 'none' }}>{props.title}</Link>
-                                <Link to={`/`} style={{color: 'white'}} onClick={() => props.setEditMode(true)}>Edit Name</Link></div>}
+                                <Link to={`/`} style={{color: 'white'}} onClick={() => props.setEditMode(true)}>Edit Name</Link></div>}</div>
+                        : <Link to='/' style={{ color: 'white', textDecoration: 'none' }}>{props.title}</Link>}
                     </Navbar.Brand>
                     <Navbar.Text>
                         {user.id ? <span>{user.username} <Link onClick={props.handleLogout}>Logout</Link></span>: <Link to='/login'>Login</Link>}

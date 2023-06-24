@@ -32,4 +32,32 @@ function getUser(username, password) {
     });
 }
 
+function getUserById(id) {
+    return new Promise((resolve, reject) => {
+        const sql = 'SELECT username FROM users WHERE id=?';
+        db.get(sql, [id], (err, row) => {
+            if(err)
+                reject(err);
+            else {
+                resolve(row);
+            }
+        });
+    });
+}
+
+function getAllUsers() {
+    return new Promise((resolve, reject) => {
+        const sql = 'SELECT id, username FROM users';
+        db.all(sql, (err, rows) => {
+            if(err)
+                reject(err);
+            else {
+                resolve(rows);
+            }
+        });
+    });
+}
+
 exports.getUser = getUser;
+exports.getUserById = getUserById;
+exports.getAllUsers = getAllUsers;

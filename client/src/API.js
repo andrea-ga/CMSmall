@@ -265,5 +265,37 @@ async function doLogout() {
     }
 }
 
+async function getUsername(idUser) {
+    try {
+        const response = await fetch(APIURL + `/users/${idUser}`, {
+            credentials: 'include'
+        });
+        if (response.ok) {
+            return await response.json();
+        } else {
+            const message = await response.text();
+            throw new Error(response.statusText + " " + message);
+        }
+    } catch (error) {
+        throw new Error(error.message, { cause: error });
+    }
+}
+
+async function getAllAuthors() {
+    try {
+        const response = await fetch(APIURL + `/users`, {
+            credentials: 'include'
+        });
+        if (response.ok) {
+            return await response.json();
+        } else {
+            const message = await response.text();
+            throw new Error(response.statusText + " " + message);
+        }
+    } catch (error) {
+        throw new Error(error.message, { cause: error });
+    }
+}
+
 export { getAllPages, getPages, getBlocks, getPubBlocks, updateBlock, addPage, updatePage, getWebsiteName,
-    updateWebsiteName, deletePage, addBlock, deleteBlock, checkLogin, doLogout };
+    updateWebsiteName, deletePage, addBlock, deleteBlock, checkLogin, doLogout, getUsername, getAllAuthors };

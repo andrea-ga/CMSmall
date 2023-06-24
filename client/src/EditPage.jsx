@@ -1,15 +1,18 @@
 import {Button, Card, CardGroup, Form} from "react-bootstrap";
 import {Link, useParams} from "react-router-dom";
-import {PageDetails} from "./PagesList.jsx";
-import {updatePage} from "./API.js";
-import {useState} from "react";
+import {GetAuthor, PageDetails} from "./PagesList.jsx";
+import {getAllAuthors, updatePage} from "./API.js";
+import {useContext, useEffect, useState} from "react";
+import UserContext from "./UserContext.js";
 
 function EditPage(props) {
+    const user = useContext(UserContext);
     const {idPage} = useParams();
 
     const [title, setTitle] = useState("");
     const [idUser, setIdUser] = useState("");
     const [publicationDate, setPublicationDate] = useState("");
+    let lastId;
 
     async function handleEdit() {
         try {
@@ -41,13 +44,15 @@ function EditPage(props) {
     return <div>
         <CardGroup>
             {props.pages.map((p) => {
+                lastId = p.id;
+
                 if(p.id == idPage) {
                     return <Card key={p.id}>
                         <Card.Body>
                             <Form.Label>TITLE</Form.Label>
                             <Form.Control type="text" defaultValue={p.title} onChange={(ev) => setTitle(ev.target.value)}></Form.Control>
-                            <Form.Label>ID USER</Form.Label>
-                            <Form.Control type="text" defaultValue={p.idUser} onChange={(ev) => setIdUser(ev.target.value)}></Form.Control>
+                            {user.role === "admin" && <div><Form.Label>Author</Form.Label>
+                                <GetAllAuthors idPage={p.id} setIdUser={setIdUser} /></div>}
                             <Form.Label>Publication Date</Form.Label>
                             <Form.Control type="date" defaultValue={p.publicationDate} onChange={(ev) => setPublicationDate(ev.target.value)}></Form.Control>
                             <Card.Footer><Link to={`/`}><Button onClick={handleEdit}>Update</Button></Link></Card.Footer>
@@ -57,18 +62,48 @@ function EditPage(props) {
                 } else {
                     return <Card key={p.id}>
                         <Card.Body><Card.Title>TITLE: {p.title}</Card.Title>
-                        <Card.Subtitle>User ID: {p.idUser}</Card.Subtitle>
+                        <GetAuthor idUser={p.idUser} />
                         <Card.Subtitle>Creation Date: {p.creationDate}</Card.Subtitle>
                         <Card.Subtitle>Publication Date: {p.publicationDate}</Card.Subtitle>
                         <Card.Text><PageDetails idPage={p.id}/></Card.Text>
                         <Card.Footer><Link to={`/pages/${p.id}`}>details...</Link></Card.Footer>
-                        <Card.Footer><Link to={`/pages/${p.id}/edit`}>Edit Page</Link></Card.Footer></Card.Body>
+                            {(user.id == p.idUser || user.role === "admin") && <Card.Footer><Link to={`/pages/${p.id}/edit`}>Edit Page</Link></Card.Footer>}
+                        </Card.Body>
                     </Card>
                 }
             })}
+            {user.id && <Card key={lastId+1}>
+                <div>
+                    <Form.Group controlId="addTitle">
+                        <Form.Label className='fw-light'>Title</Form.Label>
+                        <Form.Control type = "text" name="text" placeholder="Enter Title" onChange={(ev) => {setTitle(ev.target.value)}}></Form.Control>
+                    </Form.Group>
+                    <Form.Group controlId="addPublicationDate">
+                        <Form.Label className='fw-light'>Publication Date</Form.Label>
+                        <Form.Control type = "date" name="publicationDate" placeholder="Enter Publication Date" onChange={(ev) => {setPublicationDate(ev.target.value)}}></Form.Control>
+                    </Form.Group>
+                    <Link to={`/pages/add`} state={{title: title, publicationDate: publicationDate}}><Button>ADD</Button></Link>
+                </div>
+            </Card>}
         </CardGroup>
-        <Link to={`/pages/add`}>Add Page</Link>
     </div>
+}
+
+function GetAllAuthors(props) {
+    const [authors, setAuthors] = useState([]);
+
+    useEffect(() => {
+        getAllAuthors().then((users) => {
+            setAuthors(users);
+        })
+    }, [props]);
+
+    return <Form.Select aria-label="Author select" onChange={(ev) => (props.setIdUser(ev.target.value))}>
+        <option>Select Author</option>
+        {authors.map(a => (
+            <option key={a.id} value={a.id}>{a.username}</option>
+        ))}
+    </Form.Select>
 }
 
 export {EditPage};

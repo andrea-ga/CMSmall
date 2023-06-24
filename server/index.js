@@ -32,8 +32,8 @@ passport.use(new LocalStrategy(async function verify(username, password, callbac
     return callback(null, user);
 }));
 
-passport.serializeUser(function (user, callback) { // this user is id + username + name
-    callback(null, user);
+passport.serializeUser(function (user, callback) {
+    callback(null, { id: user.id, email: user.email, username: user.username, role: user.role });
 });
 
 passport.deserializeUser(function (user, callback) {
@@ -68,6 +68,23 @@ app.post('/api/logout', (req, res) => {
     req.logout(()=>{res.end()});
 })
 
+app.get('/api/users/:idUser', (req, res) => {
+    const id = req.params.idUser;
+    userDao.getUserById(id).then((result) => {
+        res.json(result);
+    }).catch((error) => {
+        res.status(500).send(error.message);
+    });
+})
+
+app.get('/api/users', isLoggedIn, (req, res) => {
+    userDao.getAllUsers().then((result) => {
+        res.json(result);
+    }).catch((error) => {
+        res.status(500).send(error.message);
+    });
+})
+
 app.get('/api/name', (req, res) => {
     pagesDao.getWebsiteName().then((result) => {
         res.json(result);
@@ -76,7 +93,7 @@ app.get('/api/name', (req, res) => {
     });
 })
 
-app.put('/api/name', (req, res) => {
+app.put('/api/name', isLoggedIn, (req, res) => {
     const website = new Website(null, req.body.title);
     pagesDao.updateWebsiteName(website).then((result) => {
         res.end();
@@ -121,7 +138,7 @@ app.get('/api/pages/pub/:idPage', (req, res) => {
     });
 });
 
-app.post('/api/pages', (req, res) => {
+app.post('/api/pages', isLoggedIn, (req, res) => {
         const page = new Page(null, req.body.title, req.body.idUser, req.body.creationDate, req.body.publicationDate);
     pagesDao.createPage(page).then((result) => {
         res.end();
@@ -131,7 +148,7 @@ app.post('/api/pages', (req, res) => {
     });
 });
 
-app.post('/api/pages/:idPage', (req, res) => {
+app.post('/api/pages/:idPage', isLoggedIn, (req, res) => {
     const block = new Block(null, req.params.idPage, req.body.type, req.body.content, req.body.position);
     pagesDao.createBlock(block).then((result) => {
         res.end();
@@ -141,7 +158,7 @@ app.post('/api/pages/:idPage', (req, res) => {
     });
 });
 
-app.delete('/api/pages/:idPage', (req, res) => {
+app.delete('/api/pages/:idPage', isLoggedIn, (req, res) => {
     const idPage = req.params.idPage;
     pagesDao.deletePage(idPage).then((result) => {
         res.end();
@@ -150,7 +167,7 @@ app.delete('/api/pages/:idPage', (req, res) => {
     });
 });
 
-app.delete('/api/pages/:idPage/blocks/:idBlock', (req, res) => {
+app.delete('/api/pages/:idPage/blocks/:idBlock', isLoggedIn, (req, res) => {
     const idPage = req.params.idPage;
     const idBlock = req.params.idBlock;
     pagesDao.deleteBlock(idPage, idBlock).then((result) => {
@@ -160,7 +177,7 @@ app.delete('/api/pages/:idPage/blocks/:idBlock', (req, res) => {
     });
 });
 
-app.put('/api/pages/:idPage', (req, res) => {
+app.put('/api/pages/:idPage', isLoggedIn, (req, res) => {
     const idPage = req.params.idPage;
         const page = new Page(null, req.body.title, req.body.idUser, req.body.creationDate, req.body.publicationDate);
     pagesDao.updatePage(idPage, page).then((result) => {
@@ -170,7 +187,7 @@ app.put('/api/pages/:idPage', (req, res) => {
     });
 });
 
-app.put('/api/pages/:idPage/blocks/:idBlock', (req, res) => {
+app.put('/api/pages/:idPage/blocks/:idBlock', isLoggedIn, (req, res) => {
     const idPage = req.params.idPage;
     const idBlock = req.params.idBlock;
     const block = new Block(null, req.body.idPage, req.body.type, req.body.content, req.body.position);

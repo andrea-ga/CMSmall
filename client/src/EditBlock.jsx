@@ -3,6 +3,10 @@ import {useEffect, useState} from "react";
 import {getBlocks, updateBlock} from "./API.js";
 import {Button, Card, CardGroup, Form} from "react-bootstrap";
 import {PageInfo} from "./BlockList.jsx";
+import star from "../img/star.png";
+import circle from "../img/circle.png";
+import point from "../img/point.png";
+import phone from "../img/phone.png";
 
 function EditBlock(props) {
     const {idPage, idBlock} = useParams();
@@ -51,10 +55,25 @@ function EditBlock(props) {
                 if(b.id == idBlock && b.idPage == idPage) {
                     return <Card key={b.id}>
                         <Card.Body>
-                            <Form.Label>TYPE</Form.Label>
-                            <Form.Control type="text" defaultValue={b.type} onChange={(ev) => setType(ev.target.value)}></Form.Control>
-                            <Form.Label>CONTENT</Form.Label>
-                            <Form.Control type="text" defaultValue={b.content} onChange={(ev) => setContent(ev.target.value)}></Form.Control>
+                            <Form.Group controlId="addType">
+                                <Form.Label className='fw-light'>Type</Form.Label>
+                                <Form.Select aria-label="Type select" defaultValue={b.type} onChange={(ev) => (setType(ev.target.value))}>
+                                    <option value="header">Header</option>
+                                    <option value="paragraph">Paragraph</option>
+                                    <option value="image">Image</option>
+                                </Form.Select>
+                            </Form.Group>
+                            <Form.Group controlId="addContent">
+                                <Form.Label className='fw-light'>Content</Form.Label>
+                                {((type !== "image" && type !== "") || (type === "" && b.type !== "image"))  ? <Form.Control type = "text" name="content" defaultValue={b.content} onChange={(ev) => (setContent(ev.target.value))}></Form.Control> : ""}
+                                {(type === "image" || (type === "" && b.type === "image")) ? <Form.Select aria-label="Image select" defaultValue={b.content} onChange={(ev) => (setContent(ev.target.value))}>
+                                    <option>Select Image</option>
+                                    <option value="star">Star</option>
+                                    <option value="circle">Circle</option>
+                                    <option value="point">Point</option>
+                                    <option value="phone">Phone</option>
+                                </Form.Select> : ""}
+                            </Form.Group>
                             <Card.Footer><Link to={`/pages/${idPage}`}><Button onClick={handleEdit}>Update</Button></Link></Card.Footer>
                             <Card.Footer><Link to={`/pages/${idPage}`}><Button>Cancel</Button></Link></Card.Footer>
                         </Card.Body>
@@ -63,13 +82,17 @@ function EditBlock(props) {
                     return <Card key={b.id}>
                         <Card.Body>
                             <Card.Title>TYPE: {b.type}</Card.Title>
-                            <Card.Subtitle>CONTENT: {b.content}</Card.Subtitle>
+                            {b.type === "image" && b.content === "star" ? <Card.Subtitle><img src={star} alt={b.content}/></Card.Subtitle> : ""}
+                            {b.type === "image" && b.content === "circle" ? <Card.Subtitle><img src={circle} alt={b.content}/></Card.Subtitle> : ""}
+                            {b.type === "image" && b.content === "point" ? <Card.Subtitle><img src={point} alt={b.content}/></Card.Subtitle> : ""}
+                            {b.type === "image" && b.content === "phone" ? <Card.Subtitle><img src={phone} alt={b.content}/></Card.Subtitle> : ""}
+                            {b.type !== "image" ? <Card.Subtitle>CONTENT: {b.content}</Card.Subtitle> : ""}
                             <Card.Subtitle>POSITION: {b.position}</Card.Subtitle>
                             <Link to={`/pages/${idPage}/blocks/${b.id}/edit`}><Button>EDIT BLOCK</Button></Link>
                         </Card.Body>
                     </Card>
                 }
-            })}));
+            })}
             <Link to={`/pages/${idPage}/blocks/add`}><Button>Add Block</Button></Link>
         </CardGroup>
     </div>
