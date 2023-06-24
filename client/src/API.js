@@ -7,10 +7,12 @@ async function getWebsiteName() {
         });
         if(response.ok) {
             return await response.json();
-        } else
-            throw new Error();
+        } else {
+            const message = await response.text();
+            throw new Error(response.statusText + " " + message);
+        }
     } catch(e) {
-        throw new Error(e);
+        throw new Error(e.message, { cause: e });
     }
 }
 
@@ -29,10 +31,11 @@ async function updateWebsiteName(title) {
         if(response.ok) {
             return await response.json();
         } else {
-            throw new Error();
+            const message = await response.text();
+            throw new Error(response.statusText + " " + message);
         }
     } catch(e) {
-        throw new Error(e);
+        throw new Error(e.message, { cause: e });
     }
 }
 
@@ -43,10 +46,12 @@ async function getAllPages() {
         });
         if (response.ok) {
             return await response.json();
-        } else
-            throw new Error();
+        } else {
+            const message = await response.text();
+            throw new Error(response.statusText + " " + message);
+        }
     } catch(e) {
-        throw new Error(e) ;
+        throw new Error(e.message, { cause: e });
     }
 }
 
@@ -57,10 +62,12 @@ async function getPages() {
         });
         if (response.ok) {
             return await response.json();
-        } else
-            throw new Error();
+        } else {
+            const message = await response.text();
+            throw new Error(response.statusText + " " + message);
+        }
     } catch(e) {
-        throw new Error(e) ;
+        throw new Error(e.message, { cause: e });
     }
 }
 
@@ -71,10 +78,12 @@ async function getBlocks(idPage) {
         });
         if (response.ok) {
             return await response.json();
-        } else
-            throw new Error();
+        } else {
+            const message = await response.text();
+            throw new Error(response.statusText + " " + message);
+        }
     } catch(e) {
-        throw new Error(e) ;
+        throw new Error(e.message, { cause: e });
     }
 }
 
@@ -85,10 +94,12 @@ async function getPubBlocks(idPage) {
         });
         if (response.ok) {
             return await response.json();
-        } else
-            throw new Error();
+        } else {
+            const message = await response.text();
+            throw new Error(response.statusText + " " + message);
+        }
     } catch(e) {
-        throw new Error(e) ;
+        throw new Error(e.message, { cause: e });
     }
 }
 
@@ -109,10 +120,12 @@ async function updateBlock(idPage, idBlock, type, content, position) {
         });
         if (response.ok) {
             return await response.json;
-        } else
-            throw new Error();
+        } else {
+            const message = await response.text();
+            throw new Error(response.statusText + " " + message);
+        }
     } catch(e) {
-        throw new Error(e) ;
+        throw new Error(e.message, { cause: e });
     }
 }
 
@@ -133,10 +146,12 @@ async function addPage(title, idUser, creationDate, publicationDate) {
         });
         if (response.ok) {
             return await response.json;
-        } else
-            throw new Error();
+        } else {
+            const message = await response.text();
+            throw new Error(response.statusText + " " + message);
+        }
     } catch(e) {
-        throw new Error(e) ;
+        throw new Error(e.message, { cause: e });
     }
 }
 
@@ -157,10 +172,12 @@ async function updatePage(idPage, title, idUser, creationDate, publicationDate) 
         });
         if (response.ok) {
             return await response.json;
-        } else
-            throw new Error();
+        } else {
+            const message = await response.text();
+            throw new Error(response.statusText + " " + message);
+        }
     } catch(e) {
-        throw new Error(e) ;
+        throw new Error(e.message, { cause: e });
     }
 }
 
@@ -175,10 +192,12 @@ async function deletePage(idPage) {
         });
         if (response.ok) {
             return await response.json;
-        } else
-            throw new Error();
+        } else {
+            const message = await response.text();
+            throw new Error(response.statusText + " " + message);
+        }
     } catch(e) {
-        throw new Error(e) ;
+        throw new Error(e.message, { cause: e });
     }
 }
 
@@ -199,10 +218,12 @@ async function addBlock(idPage, type, content, position) {
         });
         if (response.ok) {
             return await response.json;
-        } else
-            throw new Error();
+        } else {
+            const message = await response.text();
+            throw new Error(response.statusText + " " + message);
+        }
     } catch(e) {
-        throw new Error(e) ;
+        throw new Error(e.message, { cause: e });
     }
 }
 
@@ -217,10 +238,12 @@ async function deleteBlock(idPage, idBlock) {
         });
         if (response.ok) {
             return await response.json;
-        } else
-            throw new Error();
+        } else {
+            const message = await response.text();
+            throw new Error(response.statusText + " " + message);
+        }
     } catch(e) {
-        throw new Error(e) ;
+        throw new Error(e.message, { cause: e });
     }
 }
 
