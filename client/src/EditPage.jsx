@@ -4,6 +4,7 @@ import {GetAuthor, PageDetails} from "./PagesList.jsx";
 import {getAllAuthors, updatePage} from "./API.js";
 import {useContext, useEffect, useState} from "react";
 import UserContext from "./UserContext.js";
+import dayjs from "dayjs";
 
 function EditPage(props) {
     const user = useContext(UserContext);
@@ -25,7 +26,7 @@ function EditPage(props) {
                 if(idUser !== "")
                     newP = {...newP, idUser: idUser};
                 if(publicationDate !== "")
-                    newP = {...newP, publicationDate: publicationDate};
+                    newP = {...newP, publicationDate: dayjs(publicationDate).format("MM/DD/YY")};
 
                 return newP;
             }
