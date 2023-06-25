@@ -1,4 +1,4 @@
-import {Button, Card, CardGroup, Col, Row} from "react-bootstrap";
+import {Button, Card, CardGroup, Col, Nav, Row} from "react-bootstrap";
 import {Link, useParams} from "react-router-dom";
 import {useContext, useEffect, useState} from "react";
 import {deleteBlock, getBlocks, getPubBlocks, updateBlock} from "./API.js";
@@ -71,27 +71,43 @@ function BlockList(props) {
     return <div>
         {errMsg && <p>{errMsg}</p>}
         <PageInfo page={page} />
-        <CardGroup>
+        <br/>
+        {(user.id == page.idUser || user.role === "admin") && <Link to={`/pages/${idPage}/blocks/add`}><Button>Add Block</Button></Link>}
+        <Link to={`/`}><Button>Go Back</Button></Link>
             {blocks.sort((a,b) => (a.position - b.position)).map((b) => (
                 <Card key={b.id}>
+                    <Card.Header>
+                        <Nav>
+                            <Nav.Item>
+                                <Card.Header><p>{b.type}</p></Card.Header>
+                            </Nav.Item>
+                            <Nav.Item>
+                                <Card.Header><p>Position: {b.position}</p></Card.Header>
+                            </Nav.Item>
+                            <Nav.Item>
+                                {(user.id == page.idUser || user.role === "admin") && <Card.Header><p onClick={() => {changePosUp(b.id, b.type, b.content, b.position)}}>↑</p></Card.Header>}
+                            </Nav.Item>
+                            <Nav.Item>
+                                {(user.id == page.idUser || user.role === "admin") && <Card.Header><p onClick={() => {changePosDown(b.id, b.type, b.content, b.position)}}>↓</p></Card.Header>}
+                            </Nav.Item>
+                            <Nav.Item class="navbar-nav me-auto mb-2 mb-lg-0"></Nav.Item>
+                            <Nav.Item >
+                                {(user.id == page.idUser || user.role === "admin") && <Link to={`/pages/${idPage}/blocks/${b.id}/edit`}><Card.Header><Button>EDIT BLOCK</Button></Card.Header></Link>}
+                            </Nav.Item>
+                            <Nav.Item>
+                                {(user.id == page.idUser || user.role === "admin") && <Link to={`/pages/${idPage}`}><Card.Header><Button variant="danger" onClick={() => handleDelete(b)}>DELETE BLOCK</Button></Card.Header></Link>}
+                            </Nav.Item>
+                        </Nav>
+                    </Card.Header>
                     <Card.Body>
-                        {(user.id == page.idUser || user.role === "admin") && <div><Card.Header><p onClick={() => {changePosUp(b.id, b.type, b.content, b.position)}}>↑</p></Card.Header>
-                            <Card.Header><p onClick={() => {changePosDown(b.id, b.type, b.content, b.position)}}>↓</p></Card.Header></div>}
-                        <Card.Title>TYPE: {b.type}</Card.Title>
                         {b.type === "image" && b.content === "star" ? <Card.Subtitle><img src={star} alt={b.content}/></Card.Subtitle> : ""}
                         {b.type === "image" && b.content === "circle" ? <Card.Subtitle><img src={circle} alt={b.content}/></Card.Subtitle> : ""}
                         {b.type === "image" && b.content === "point" ? <Card.Subtitle><img src={point} alt={b.content}/></Card.Subtitle> : ""}
                         {b.type === "image" && b.content === "phone" ? <Card.Subtitle><img src={phone} alt={b.content}/></Card.Subtitle> : ""}
-                        {b.type !== "image" ? <Card.Subtitle>CONTENT: {b.content}</Card.Subtitle> : ""}
-                        <Card.Subtitle>POSITION: {b.position}</Card.Subtitle>
-                        {(user.id == page.idUser || user.role === "admin") && <div><Link to={`/pages/${idPage}/blocks/${b.id}/edit`}><Button>EDIT BLOCK</Button></Link>
-                            <Link to={`/pages/${idPage}`}><Button onClick={() => handleDelete(b)}>DELETE BLOCK</Button></Link></div>}
+                        {b.type !== "image" ? <Card.Subtitle><p>{b.content}</p></Card.Subtitle> : ""}
                     </Card.Body>
                 </Card>
             ))}
-            {(user.id == page.idUser || user.role === "admin") && <Link to={`/pages/${idPage}/blocks/add`}><Button>Add Block</Button></Link>}
-            <Link to={`/`}><Button>Go Back</Button></Link>
-        </CardGroup>
     </div>
 }
 

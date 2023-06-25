@@ -1,4 +1,4 @@
-import {Button, Card, CardGroup, Col, Form, Row} from "react-bootstrap";
+import {Button, Card, CardGroup, Col, Form, Nav, Row} from "react-bootstrap";
 import {useContext, useState} from "react";
 import UserContext from "./UserContext.js";
 import {Link, useLocation, useNavigate} from "react-router-dom";
@@ -118,13 +118,21 @@ function AddPage(props) {
                 </Col>
             </Row>
         </div>
-        <CardGroup>
+        <br/>
             <Card><Button onClick={addMoreBlocks}>+</Button></Card>
+        <br/>
             {blocks.sort((a,b) => (a.position - b.position)).map((b) => (
                  <Card key={b.id}>
-                    <Card.Body>
-                        <div><Card.Header><p onClick={() => {changePosUp(b.id, b.type, b.content, b.position)}}>↑</p></Card.Header>
-                            <Card.Header><p onClick={() => {changePosDown(b.id, b.type, b.content, b.position)}}>↓</p></Card.Header></div>
+                     <Card.Header>
+                         <Nav>
+                             <Nav.Item>
+                                 <Card.Header><p>position: {b.position}</p></Card.Header>
+                             </Nav.Item>
+                             <Nav.Item><Card.Header><p onClick={() => {changePosUp(b.id, b.type, b.content, b.position)}}>↑</p></Card.Header></Nav.Item>
+                             <Nav.Item><Card.Header><p onClick={() => {changePosDown(b.id, b.type, b.content, b.position)}}>↓</p></Card.Header></Nav.Item>
+                         </Nav>
+                     </Card.Header>
+                     <Card.Body>
                     <Form.Group controlId="addType">
                         <Form.Label className='fw-light'>Type</Form.Label>
                         <Form.Select aria-label="Type select" onChange={(ev) => {handleUpdateType(ev, b.id)}}>
@@ -135,7 +143,7 @@ function AddPage(props) {
                     </Form.Group>
                     <Form.Group controlId="addContent">
                         <Form.Label className='fw-light'>Content</Form.Label>
-                        {types[b.id] !== "image" ? <Form.Control type = "text" name="content" placeholder="Enter Content" onChange={(ev) => {handleUpdateContent(ev, b.id)}}></Form.Control> : ""}
+                        {types[b.id] !== "image" ? <Form.Control as="textarea" aria-label="With textarea" name="content" placeholder="Enter Content" onChange={(ev) => {handleUpdateContent(ev, b.id)}}></Form.Control> : ""}
                         {types[b.id] === "image" ? <Form.Select aria-label="Image select" onChange={(ev) => {handleUpdateContent(ev, b.id)}}>
                             <option>Select Image</option>
                             <option value="star">Star</option>
@@ -145,12 +153,12 @@ function AddPage(props) {
                         </Form.Select> : ""}
                     </Form.Group>
                     </Card.Body>
-                     <Button onClick={() => handleDelete(b)}>DELETE BLOCK</Button>
+                     <Button variant="danger" onClick={() => handleDelete(b)}>DELETE BLOCK</Button>
                 </Card>
             ))}
+        <br/>
             {user.id && <Button onClick={handleAdd}>ADD PAGE</Button>}
             <Link to={`/`}><Button>CANCEL</Button></Link>
-        </CardGroup>
     </div>
 }
 

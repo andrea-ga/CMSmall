@@ -17,7 +17,7 @@ import {PageNotFound} from "./PageNotFound.jsx";
 function App() {
     const [pages, setPages] = useState([]);
     const [editMode, setEditMode] = useState(false);
-    const [title, setTitle] = useState("");
+    const [title, setTitle] = useState(null);
     const [user, setUser] = useState({}) ;
 
     const validateLogin = async (username, password) => {
@@ -48,7 +48,10 @@ function App() {
     }, [user]);
 
     async function handleChangeName() {
-        await updateWebsiteName(title);
+        console.log(title);
+        if(title !== null)
+            await updateWebsiteName(title);
+
         setEditMode(false);
     }
 
@@ -97,12 +100,12 @@ function MainLayout(props) {
                         {user.role === "admin" ? <div>{props.editMode ? <div><Form.Group><Form.Control defaultValue={props.title} onChange={(ev) => props.setTitle(ev.target.value)}></Form.Control></Form.Group>
                                 <Link to={`/`} style={{color: 'white'}} onClick={props.handleChangeName}><Button>Update</Button></Link>
                                 <Link to={`/`} style={{color: 'white'}} onClick={props.handleCancelChangeName}><Button>Cancel</Button></Link></div>
-                            : <div><Link to='/' style={{ color: 'white', textDecoration: 'none' }}>{props.title}</Link>
+                                : <div><Link to='/' style={{ color: 'white', textDecoration: 'none' }}><h4>{props.title}</h4></Link>
                                 <Link to={`/`} style={{color: 'white'}} onClick={() => props.setEditMode(true)}>Edit Name</Link></div>}</div>
                             : <Link to='/' style={{ color: 'white', textDecoration: 'none' }}><h4>{props.title}</h4></Link>}
                     </Navbar.Brand>
                     <Navbar.Text>
-                        {user.id ? <span>{user.username} <Link onClick={props.handleLogout}>Logout</Link></span>: <Link to='/login'>Login</Link>}
+                        {user.id ? <span>{user.username} <Link onClick={props.handleLogout}><Button variant="info">Logout</Button></Link></span>: <Link to='/login'><Button variant="info">Login</Button></Link>}
                     </Navbar.Text>
                 </Container>
             </Navbar>

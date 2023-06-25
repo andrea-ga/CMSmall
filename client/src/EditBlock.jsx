@@ -1,15 +1,17 @@
 import {Link, useNavigate, useParams} from "react-router-dom";
-import {useEffect, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import {getBlocks, updateBlock} from "./API.js";
-import {Button, Card, CardGroup, Form} from "react-bootstrap";
+import {Button, Card, CardGroup, Form, Nav} from "react-bootstrap";
 import {PageInfo} from "./BlockList.jsx";
 import star from "../img/star.png";
 import circle from "../img/circle.png";
 import point from "../img/point.png";
 import phone from "../img/phone.png";
+import UserContext from "./UserContext.js";
 
 function EditBlock(props) {
     const {idPage, idBlock} = useParams();
+    const user = useContext(UserContext);
 
     const [type, setType] = useState(null);
     const [content, setContent] = useState(null);
@@ -67,10 +69,9 @@ function EditBlock(props) {
     return <div>
         {errMsg && <p>{errMsg}</p>}
         <PageInfo page={page} />
-        <CardGroup>
             {blocks.sort((a,b) => (a.position - b.position)).map((b) => {
                 if(b.id == idBlock && b.idPage == idPage) {
-                    return <Card key={b.id}>
+                    return <Card bg="info" key={b.id} >
                         <Card.Body>
                             <Form.Group controlId="addType">
                                 <Form.Label className='fw-light'>Type</Form.Label>
@@ -91,27 +92,41 @@ function EditBlock(props) {
                                     <option value="phone">Phone</option>
                                 </Form.Select> : ""}
                             </Form.Group>
-                            <Card.Footer><Button onClick={handleEdit}>Update</Button></Card.Footer>
-                            <Card.Footer><Link to={`/pages/${idPage}`}><Button>Cancel</Button></Link></Card.Footer>
+                            <Card.Footer><Button onClick={handleEdit}>Update</Button>
+                                <Link to={`/pages/${idPage}`}><Button>Cancel</Button></Link></Card.Footer>
                         </Card.Body>
                     </Card>
                 } else {
                     return <Card key={b.id}>
+                        <Card.Header>
+                            <Nav>
+                                <Nav.Item>
+                                    <Card.Header><p>{b.type}</p></Card.Header>
+                                </Nav.Item>
+                                <Nav.Item>
+                                    <Card.Header><p>Position: {b.position}</p></Card.Header>
+                                </Nav.Item>
+                                <Nav.Item class="navbar-nav me-auto mb-2 mb-lg-0"></Nav.Item>
+                                <Nav.Item>
+                                    {(user.id == page.idUser || user.role === "admin") && <Link to={`/pages/${idPage}/blocks/${b.id}/edit`}><Card.Header><Button>EDIT BLOCK</Button></Card.Header></Link>}
+                                </Nav.Item>
+                                <Nav.Item>
+                                    {(user.id == page.idUser || user.role === "admin") && <Link to={`/pages/${idPage}`}><Card.Header><Button variant="danger" onClick={() => handleDelete(b)}>DELETE BLOCK</Button></Card.Header></Link>}
+                                </Nav.Item>
+                            </Nav>
+                        </Card.Header>
                         <Card.Body>
-                            <Card.Title>TYPE: {b.type}</Card.Title>
                             {b.type === "image" && b.content === "star" ? <Card.Subtitle><img src={star} alt={b.content}/></Card.Subtitle> : ""}
                             {b.type === "image" && b.content === "circle" ? <Card.Subtitle><img src={circle} alt={b.content}/></Card.Subtitle> : ""}
                             {b.type === "image" && b.content === "point" ? <Card.Subtitle><img src={point} alt={b.content}/></Card.Subtitle> : ""}
                             {b.type === "image" && b.content === "phone" ? <Card.Subtitle><img src={phone} alt={b.content}/></Card.Subtitle> : ""}
-                            {b.type !== "image" ? <Card.Subtitle>CONTENT: {b.content}</Card.Subtitle> : ""}
-                            <Card.Subtitle>POSITION: {b.position}</Card.Subtitle>
-                            <Link to={`/pages/${idPage}/blocks/${b.id}/edit`}><Button>EDIT BLOCK</Button></Link>
+                            {b.type !== "image" ? <Card.Subtitle><p>{b.content}</p></Card.Subtitle> : ""}
                         </Card.Body>
                     </Card>
                 }
             })}
+        <br/>
             <Link to={`/pages/${idPage}/blocks/add`}><Button>Add Block</Button></Link>
-        </CardGroup>
     </div>
 }
 

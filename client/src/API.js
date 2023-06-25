@@ -29,7 +29,7 @@ async function updateWebsiteName(title) {
             })
         });
         if(response.ok) {
-            return await response.json();
+            return true;
         } else {
             const message = await response.text();
             throw new Error(response.statusText + " " + message);

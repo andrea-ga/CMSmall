@@ -38,7 +38,7 @@ function AddBlock() {
         </Form.Group>
         <Form.Group controlId="addContent">
             <Form.Label className='fw-light'>Content</Form.Label>
-            {type !== "image" ? <Form.Control type = "text" name="content" placeholder="Enter Content" onChange={(ev) => {setContent(ev.target.value)}}></Form.Control> : ""}
+            {type !== "image" ? <Form.Control as="textarea" aria-label="With textarea" name="content" placeholder="Enter Content" onChange={(ev) => {setContent(ev.target.value)}}></Form.Control> : ""}
             {type === "image" ? <Form.Select aria-label="Image select" onChange={(ev) => (setContent(ev.target.value))}>
                 <option>Select Image</option>
                 <option value="star">Star</option>

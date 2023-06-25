@@ -24,6 +24,7 @@ function PagesList(props) {
                     <Form.Label className='fw-light'>Publication Date</Form.Label>
                     <Form.Control type = "date" name="publicationDate" placeholder="Enter Publication Date" onChange={(ev) => {setPublicationDate(ev.target.value)}}></Form.Control>
                 </Form.Group>
+                <br/>
                 <Link to={`/pages/add`} state={{title: title, publicationDate: publicationDate}}><Button>Add New Page</Button></Link>
             </div>
         </Card>}
@@ -36,20 +37,34 @@ function PagesList(props) {
                     <Card.Header>
                         <Nav variant="tabs">
                             <Nav.Item>
-                                <Link to={`/pages/${p.id}`}><h3>{p.title}</h3></Link>
+                                <Card.Header><Link to={`/pages/${p.id}`}><h3>{p.title}</h3></Link></Card.Header>
                             </Nav.Item>
+                            <Nav.Item class="navbar-nav me-auto mb-2 mb-lg-0"></Nav.Item>
                             {(user.id == p.idUser || user.role === "admin") && <Nav.Item>
-                                <Link to={`/pages/${p.id}/edit`}><Button>Edit</Button></Link>
+                                <Card.Header><Link to={`/pages/${p.id}/edit`}><Button>EDIT PAGE INFO</Button></Link></Card.Header>
                             </Nav.Item>}
                             {(user.id == p.idUser || user.role === "admin") && <Nav.Item>
-                                <Link to={`/`}><Button variant ="danger" onClick={() => props.handleDelete(p.id)}>Delete</Button></Link>
+                                <Card.Header><Link to={`/`}><Button variant ="danger" onClick={() => props.handleDelete(p.id)}>DELETE</Button></Link></Card.Header>
                             </Nav.Item>}
                         </Nav>
                     </Card.Header>
                     <Card.Body>
                         <Card.Text><PageDetails idPage={p.id}/></Card.Text>
-                        <Card.Footer><GetAuthor idUser={p.idUser} /></Card.Footer>
-                        <Card.Footer><p>Published: {p.publicationDate} Created: {p.creationDate}</p></Card.Footer>
+                        <Card.Footer>
+                            <Nav variant="tabs">
+                                <Nav.Item>
+                                    <Card.Footer><GetAuthor idUser={p.idUser} /></Card.Footer>
+                                </Nav.Item>
+
+                                <Nav.Item class="navbar-nav me-auto mb-2 mb-lg-0"></Nav.Item>
+                                <Nav.Item>
+                                    <Card.Footer><p>Created on: {p.creationDate}</p></Card.Footer>
+                                </Nav.Item>
+                                <Nav.Item>
+                                    <Card.Footer><p>Published on: {p.publicationDate}</p></Card.Footer>
+                                </Nav.Item>
+                            </Nav>
+                        </Card.Footer>
                     </Card.Body>
                 </Card>
             <br/></div>

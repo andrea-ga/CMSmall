@@ -58,7 +58,7 @@ function EditPage(props) {
 
             if(p.id == idPage) {
                 return <div key={p.id}>
-                    <Card>
+                    <Card bg="info">
                         <Card.Header>
                             <Nav variant="tabs">
                                 <Nav.Item>
