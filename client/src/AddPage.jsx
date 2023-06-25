@@ -103,6 +103,10 @@ function AddPage(props) {
 
         setBlocks(blocks.filter((b) => b.id != block.id));
         setBlocks((old) => (old.map(b => b.position > pos ? {...b, position: b.position-1} : b)));
+        types[block.id] = "header";
+        setTypes(types);
+        contents[block.id] = "";
+        setContents(contents);
     }
 
     return <div>
