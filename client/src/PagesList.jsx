@@ -13,9 +13,11 @@ function PagesList(props) {
     const [idUser, setIdUser] = useState("");
     const [publicationDate, setPublicationDate] = useState("");
     const [editModeId, setEditModeId] = useState(null);
+    const [waiting, setWaiting] = useState(false);
     let lastId;
 
     async function handleEdit(idPage) {
+        setWaiting(true);
         let newP = "";
         props.setPages((old) => old.map(p => {
             if(p.id == idPage) {
@@ -38,12 +40,15 @@ function PagesList(props) {
             await updatePage(idPage, newP.title, newP.idUser, newP.creationDate, newP.publicationDate);
 
         setEditModeId(null);
+        setWaiting(false);
     }
 
     async function handleDelete(idPage) {
+        setWaiting(true);
         setPages((old) => old.filter((p) => p.id != idPage));
 
         await deletePage(idPage);
+        setWaiting(false);
     }
 
     return <div>
@@ -58,7 +63,7 @@ function PagesList(props) {
                     <Form.Control type = "date" name="publicationDate" placeholder="Enter Publication Date" onChange={(ev) => {setPublicationDate(ev.target.value)}}></Form.Control>
                 </Form.Group>
                 <br/>
-                <Link to={`/pages/add`} state={{title: title, publicationDate: publicationDate}}><Button>Add New Page</Button></Link>
+                <Link to={`/pages/add`} state={{title: title, publicationDate: publicationDate}}><Button disabled={waiting}>Add New Page</Button></Link>
             </div>
         </Card>}
         <br/>
@@ -73,7 +78,7 @@ function PagesList(props) {
                                     <Form.Control type="text" defaultValue={p.title} onChange={(ev) => setTitle(ev.target.value)}></Form.Control>
                                 </Nav.Item>
                                 {(user.id == p.idUser || user.role === "admin") && <Nav.Item>
-                                    <Link to={`/`}><Button variant ="danger" onClick={() => handleDelete(p.id)}>Delete</Button></Link>
+                                    <Link to={`/`}><Button disabled={waiting} variant ="danger" onClick={() => handleDelete(p.id)}>Delete</Button></Link>
                                 </Nav.Item>}
                             </Nav>
                         </Card.Header>
@@ -82,7 +87,7 @@ function PagesList(props) {
                                 <GetAllAuthors idPage={p.id} setIdUser={setIdUser} /></div>}</Card.Footer>
                             <Card.Footer><Form.Label>Publication Date</Form.Label>
                                 <Form.Control type="date" defaultValue={p.publicationDate} onChange={(ev) => setPublicationDate(ev.target.value)}></Form.Control></Card.Footer>
-                            <Card.Footer><Button onClick={() => handleEdit(p.id)}>Update</Button>
+                            <Card.Footer><Button disabled={waiting} onClick={() => handleEdit(p.id)}>Update</Button>
                                 <Button onClick={() => setEditModeId(null)}>Cancel</Button></Card.Footer>
                         </Card.Body>
                     </Card>
@@ -97,16 +102,16 @@ function PagesList(props) {
                             </Nav.Item>
                             <Nav.Item class="navbar-nav me-auto mb-2 mb-lg-0"></Nav.Item>
                             {(user.id == p.idUser || user.role === "admin") && <Nav.Item>
-                                <Card.Header><Button onClick={() => setEditModeId(p.id)}>EDIT PAGE INFO</Button></Card.Header>
+                                <Card.Header><Button disabled={waiting} onClick={() => setEditModeId(p.id)}>EDIT PAGE INFO</Button></Card.Header>
                             </Nav.Item>}
                             {(user.id == p.idUser || user.role === "admin") && <Nav.Item>
-                                <Card.Header><Link to={`/`}><Button variant ="danger" onClick={() => handleDelete(p.id)}>DELETE</Button></Link></Card.Header>
+                                <Card.Header><Link to={`/`}><Button disabled={waiting} variant ="danger" onClick={() => handleDelete(p.id)}>DELETE</Button></Link></Card.Header>
                             </Nav.Item>}
                         </Nav>
                     </Card.Header>
                     <Card.Body>
                         <Card.Text><PageDetails idPage={p.id}/></Card.Text>
-                        <Link to={`/pages/${p.id}`}><Card.Subtitle><Button>SHOW PAGE</Button></Card.Subtitle></Link>
+                        <Link to={`/pages/${p.id}`}><Card.Subtitle><Button disabled={waiting}>SHOW PAGE</Button></Card.Subtitle></Link>
                         <br/>
                         <Card.Footer>
                             <Nav variant="tabs">

@@ -12,67 +12,69 @@ function AddPage(props) {
     const [types, setTypes] = useState([]);
     const [contents, setContents] = useState([]);
     const [errMsg, setErrMsg] = useState('');
+    const [waiting, setWaiting] = useState(false);
     const navigate = useNavigate();
 
     async function handleAdd() {
-        try {
-            let headerFound = false;
-            let parImgFound = false;
-            let contentEmpty = false;
+        setWaiting(true);
+        let headerFound = false;
+        let parImgFound = false;
+        let contentEmpty = false;
 
-            for(const bl of blocks) {
-                if(bl.type === "header") {
-                    headerFound = true;
+        for(const bl of blocks) {
+            if(bl.type === "header") {
+                headerFound = true;
 
-                    for(const bl2 of blocks) {
-                        if(bl2.type === "paragraph" || bl2.type === "image") {
-                            parImgFound = true;
+                for(const bl2 of blocks) {
+                    if(bl2.type === "paragraph" || bl2.type === "image") {
+                        parImgFound = true;
 
-                            for(const bl3 of blocks) {
-                                if(bl3.content === "") {
-                                    setErrMsg("CONTENT IS EMPTY");
-                                    contentEmpty = true;
-                                    break;
-                                }
-                            }
-
-                            if(!contentEmpty) {
-                                await addPage(state.title, user.id, dayjs(), state.publicationDate, blocks);
-
-                                getAllPages().then((list) => {
-                                    props.setPages(list);
-                                });
-                                navigate(`/`);
+                        for(const bl3 of blocks) {
+                            if(bl3.content === "") {
+                                setErrMsg("CONTENT IS EMPTY");
+                                contentEmpty = true;
+                                break;
                             }
                         }
 
-                        if(parImgFound)
-                            break;
-                    }
-                }
+                        if(!contentEmpty) {
+                            await addPage(state.title, user.id, dayjs(), state.publicationDate, blocks);
 
-                if(headerFound)
-                    break;
+                            getAllPages().then((list) => {
+                                props.setPages(list);
+                            });
+                            navigate(`/`);
+                        }
+                    }
+
+                    if(parImgFound)
+                        break;
+                }
             }
 
-            if(!headerFound)
-                setErrMsg("THERE'S NO HEADER");
-            else if(!parImgFound)
-                setErrMsg("THERE'S NO PARAGRAPH OR IMAGE");
-            else
-                setErrMsg("");
-        } catch (error) {
-            console.log(error);
+            if(headerFound)
+                break;
         }
+
+        if(!headerFound)
+            setErrMsg("THERE'S NO HEADER");
+        else if(!parImgFound)
+            setErrMsg("THERE'S NO PARAGRAPH OR IMAGE");
+        else
+            setErrMsg("");
+
+        setWaiting(false);
     }
 
     async function addMoreBlocks() {
+        setWaiting(true);
         const bl = {id: blocks.length+1, type: "header", content: "", position: 1}
         blocks.push(bl);
 
         setBlocks(blocks);
         setBlocks((old) => old.map(b => (bl.id != b.id ? {...b, position: b.position+1} : b)));
         setErrMsg("");
+        setWaiting(false);
     }
 
     async function handleUpdateType(ev, id) {
@@ -88,22 +90,28 @@ function AddPage(props) {
     }
 
     async function changePosUp(idBlock, type, content, position) {
+        setWaiting(true);
         if(position !== 1) {
             setBlocks((old) => old.map(b => (b.position === position-1 ? {...b, position: b.position+1} : b)));
             setBlocks((old) => old.map(b => (b.id === idBlock ? {...b, position: b.position-1} : b)));
         }
         setErrMsg("");
+        setWaiting(false);
     }
 
     async function changePosDown(idBlock, type, content, position) {
+        setWaiting(true);
         if(position !== blocks.length) {
             setBlocks((old) => old.map(b => (b.position === position+1 ? {...b, position: b.position-1} : b)));
             setBlocks((old) => old.map(b => (b.id === idBlock ? {...b, position: b.position+1} : b)));
         }
         setErrMsg("");
+        setWaiting(false);
     }
 
     async function handleDelete(block) {
+        setWaiting(true);
+
         const pos = block.position;
 
         setBlocks(blocks.filter((b) => b.id != block.id));
@@ -113,6 +121,8 @@ function AddPage(props) {
         contents[block.id] = "";
         setContents(contents);
         setErrMsg("");
+
+        setWaiting(false);
     }
 
     return <div>
@@ -124,7 +134,7 @@ function AddPage(props) {
             </Row>
         </div>
         <br/>
-            <Card><Button onClick={addMoreBlocks}>ADD BLOCK</Button></Card>
+            <Card><Button disabled={waiting} onClick={addMoreBlocks}>ADD BLOCK</Button></Card>
         <br/>
             {blocks.sort((a,b) => (a.position - b.position)).map((b) => (
                 <div key={b.id}><Card>
@@ -133,8 +143,8 @@ function AddPage(props) {
                              <Nav.Item>
                                  <Card.Header><p>position: {b.position}</p></Card.Header>
                              </Nav.Item>
-                             <Nav.Item><Card.Header><p onClick={() => {changePosUp(b.id, b.type, b.content, b.position)}}>↑</p></Card.Header></Nav.Item>
-                             <Nav.Item><Card.Header><p onClick={() => {changePosDown(b.id, b.type, b.content, b.position)}}>↓</p></Card.Header></Nav.Item>
+                             <Nav.Item><Card.Header><Button disabled={waiting} onClick={() => {changePosUp(b.id, b.type, b.content, b.position)}}>↑</Button></Card.Header></Nav.Item>
+                             <Nav.Item><Card.Header><Button disabled={waiting} onClick={() => {changePosDown(b.id, b.type, b.content, b.position)}}>↓</Button></Card.Header></Nav.Item>
                          </Nav>
                      </Card.Header>
                      <Card.Body>
@@ -158,10 +168,10 @@ function AddPage(props) {
                         </Form.Select> : ""}
                     </Form.Group>
                     </Card.Body>
-                     <Button variant="danger" onClick={() => handleDelete(b)}>DELETE BLOCK</Button>
+                     <Button disabled={waiting} variant="danger" onClick={() => handleDelete(b)}>DELETE BLOCK</Button>
                 </Card><br/></div>
             ))}
-            {user.id && <Button onClick={handleAdd}>ADD PAGE</Button>}
+            {user.id && <Button disabled={waiting} onClick={handleAdd}>ADD PAGE</Button>}
             <Link to={`/`}><Button>CANCEL</Button></Link>
         {errMsg && <p>{errMsg}</p>}
     </div>

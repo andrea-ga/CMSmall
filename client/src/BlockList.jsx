@@ -13,16 +13,19 @@ function BlockList(props) {
     const [blocks, setBlocks] = useState([]);
     const [errMsg, setErrMsg] = useState('');
     const [editModeId, setEditModeId] = useState(null);
+    const [waiting, setWaiting] = useState(true);
     let lastId;
 
     useEffect(() => {
         if(user.id) {
             getBlocks(idPage).then((list) => {
                 setBlocks(list);
+                setWaiting(false);
             });
         } else {
             getPubBlocks(idPage).then((list) => {
                 setBlocks(list);
+                setWaiting(false);
             });
         }
     }, [idPage, user]);
@@ -30,6 +33,7 @@ function BlockList(props) {
     const page = props.pages.filter((p) => (p.id == idPage))[0];
 
     async function handleAdd() {
+        setWaiting(true);
         if (content !== null && content !== "") {
             await addBlock(idPage, type ? type : "header", content, blocks.length+1);
 
@@ -41,9 +45,12 @@ function BlockList(props) {
         }
         else
             setErrMsg("CONTENT CAN'T BE EMPTY");
+
+        setWaiting(false);
     }
 
     async function handleEdit(idBlock) {
+        setWaiting(true);
         const header = (type === "header")
             || (type === null && blocks.find((b) => b.id == idBlock && b.type === "header"))
             || blocks.find((b) => b.id != idBlock && b.type === "header");
@@ -80,9 +87,12 @@ function BlockList(props) {
             setEditModeId(null);
         } else
             setErrMsg("PAGE MUST HAVE AT LEAST ONE HEADER TOGETHER WITH A PARAGRAPH OR IMAGE");
+
+        setWaiting(false);
     }
 
     async function changePosUp(idBlock, type, content, position) {
+        setWaiting(true);
         if(position !== 1) {
             setBlocks((old) => old.map(b => (b.position === position-1 ? {...b, position: b.position+1} : b)));
             for(const b of blocks)
@@ -92,9 +102,11 @@ function BlockList(props) {
             setBlocks((old) => old.map(b => (b.id === idBlock ? {...b, position: b.position-1} : b)));
             await updateBlock(idPage, idBlock, type, content, position-1);
         }
+        setWaiting(false);
     }
 
     async function changePosDown(idBlock, type, content, position) {
+        setWaiting(true);
         if(position !== blocks.length) {
             setBlocks((old) => old.map(b => (b.position === position+1 ? {...b, position: b.position-1} : b)));
             for(const b of blocks)
@@ -104,9 +116,11 @@ function BlockList(props) {
             setBlocks((old) => old.map(b => (b.id === idBlock ? {...b, position: b.position+1} : b)));
             await updateBlock(idPage, idBlock, type, content, position+1);
         }
+        setWaiting(false);
     }
 
     async function handleDelete(block) {
+        setWaiting(true);
         const header = blocks.find((b) => b.id != block.id && b.type === "header");
         const parOrImg = blocks.find((b) => b.id != block.id && (b.type === "paragraph" || b.type === "image"));
 
@@ -121,9 +135,10 @@ function BlockList(props) {
             });
 
             setErrMsg("");
-        } else {
+        } else
             setErrMsg("PAGE MUST HAVE AT LEAST ONE HEADER TOGETHER WITH A PARAGRAPH OR IMAGE");
-        }
+
+        setWaiting(false);
     }
 
     return <div>
@@ -150,7 +165,7 @@ function BlockList(props) {
                     </Form.Select> : ""}
                 </Form.Group>
                 <br/>
-                <Button onClick={handleAdd}>ADD NEW BLOCK</Button>
+                <Button disabled={waiting} onClick={handleAdd}>ADD NEW BLOCK</Button>
             </div></Card>}
         <br/>
         {errMsg && <p>{errMsg}</p>}
@@ -183,7 +198,7 @@ function BlockList(props) {
                                         <option value="phone">Phone</option>
                                     </Form.Select> : ""}
                             </Form.Group>
-                            <Card.Footer><Button onClick={() => handleEdit(b.id)}>Update</Button>
+                            <Card.Footer><Button disabled={waiting} onClick={() => handleEdit(b.id)}>Update</Button>
                                 <Button onClick={() => setEditModeId(null)}>Cancel</Button></Card.Footer>
                         </Card.Body>
                     </Card>
@@ -199,26 +214,25 @@ function BlockList(props) {
                                 </Nav.Item>
                                 <Nav.Item>
                                     {(user.id == page.idUser || user.role === "admin") &&
-                                        <Card.Header><p onClick={() => {
+                                        <Card.Header><Button disabled={waiting} onClick={() => {
                                             changePosUp(b.id, b.type, b.content, b.position)
-                                        }}>↑</p></Card.Header>}
+                                        }}>↑</Button></Card.Header>}
                                 </Nav.Item>
                                 <Nav.Item>
                                     {(user.id == page.idUser || user.role === "admin") &&
-                                        <Card.Header><p onClick={() => {
+                                        <Card.Header><Button disabled={waiting} onClick={() => {
                                             changePosDown(b.id, b.type, b.content, b.position)
-                                        }}>↓</p></Card.Header>}
+                                        }}>↓</Button></Card.Header>}
                                 </Nav.Item>
                                 <Nav.Item class="navbar-nav me-auto mb-2 mb-lg-0"></Nav.Item>
                                 <Nav.Item>
                                     {(user.id == page.idUser || user.role === "admin") &&
-                                       <Card.Header><Button onClick={() => setEditModeId(b.id)}>EDIT BLOCK</Button></Card.Header>}
+                                       <Card.Header><Button disabled={waiting} onClick={() => setEditModeId(b.id)}>EDIT BLOCK</Button></Card.Header>}
                                 </Nav.Item>
                                 <Nav.Item>
                                     {(user.id == page.idUser || user.role === "admin") &&
-                                        <Link to={`/pages/${idPage}`}><Card.Header><Button variant="danger"
-                                                                                           onClick={() => handleDelete(b)}>DELETE
-                                            BLOCK</Button></Card.Header></Link>}
+                                        <Link to={`/pages/${idPage}`}><Card.Header>
+                                            <Button disabled={waiting} variant="danger" onClick={() => handleDelete(b)}>DELETE BLOCK</Button></Card.Header></Link>}
                                 </Nav.Item>
                             </Nav>
                         </Card.Header>
