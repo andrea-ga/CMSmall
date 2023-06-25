@@ -1,5 +1,5 @@
 [![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-24ddc0f5d75046c5622901739e7c5dd533143b0c8e959d652212380cedb1ea36.svg)](https://classroom.github.com/a/_XpznRuT)
-# Exam #12345: "Exam Title"
+# Exam #1: "CMSmall"
 
 ## Student: s310166 GALELLA ANDREA 
 
@@ -110,7 +110,14 @@ handles adding new blocks, editing blocks, deleting a block.
 
 ## Example Screenshot
 
-![Screenshot](./img/screenshot.jpg)
+![login](./images/login.png)
+![front-office](./images/front-office.png)
+![front-office-page](./images/front-office-page.png)
+![admin-back-office](./images/admin-back-office.png)
+![admin-back-office-page](./images/admin-back-office-page.png)
+![update-page-props](./images/update-page-props.png)
+![update-block-content](./images/update-block-content.png)
+![add-blocks-new-page](./images/add-blocks-new-page.png)
 
 ## Users Credentials
 
