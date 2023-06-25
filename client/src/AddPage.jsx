@@ -59,6 +59,8 @@ function AddPage(props) {
                 setErrMsg("NON C'è HEADER");
             else if(!parImgFound)
                 setErrMsg("NON C'è PARAGRAPH o IMAGE");
+            else
+                setErrMsg("");
         } catch (error) {
             console.log(error);
         }
@@ -70,6 +72,7 @@ function AddPage(props) {
 
         setBlocks(blocks);
         setBlocks((old) => old.map(b => (bl.id != b.id ? {...b, position: b.position+1} : b)));
+        setErrMsg("");
     }
 
     async function handleUpdateType(ev, id) {
@@ -89,6 +92,7 @@ function AddPage(props) {
             setBlocks((old) => old.map(b => (b.position === position-1 ? {...b, position: b.position+1} : b)));
             setBlocks((old) => old.map(b => (b.id === idBlock ? {...b, position: b.position-1} : b)));
         }
+        setErrMsg("");
     }
 
     async function changePosDown(idBlock, type, content, position) {
@@ -96,6 +100,7 @@ function AddPage(props) {
             setBlocks((old) => old.map(b => (b.position === position+1 ? {...b, position: b.position-1} : b)));
             setBlocks((old) => old.map(b => (b.id === idBlock ? {...b, position: b.position+1} : b)));
         }
+        setErrMsg("");
     }
 
     async function handleDelete(block) {
@@ -107,10 +112,10 @@ function AddPage(props) {
         setTypes(types);
         contents[block.id] = "";
         setContents(contents);
+        setErrMsg("");
     }
 
     return <div>
-        {errMsg && <p>{errMsg}</p>}
         <div>
             <Row>
                 <Col md={8}>
@@ -119,10 +124,10 @@ function AddPage(props) {
             </Row>
         </div>
         <br/>
-            <Card><Button onClick={addMoreBlocks}>+</Button></Card>
+            <Card><Button onClick={addMoreBlocks}>ADD BLOCK</Button></Card>
         <br/>
             {blocks.sort((a,b) => (a.position - b.position)).map((b) => (
-                 <Card key={b.id}>
+                <div><Card key={b.id}>
                      <Card.Header>
                          <Nav>
                              <Nav.Item>
@@ -154,11 +159,11 @@ function AddPage(props) {
                     </Form.Group>
                     </Card.Body>
                      <Button variant="danger" onClick={() => handleDelete(b)}>DELETE BLOCK</Button>
-                </Card>
+                </Card><br/></div>
             ))}
-        <br/>
             {user.id && <Button onClick={handleAdd}>ADD PAGE</Button>}
             <Link to={`/`}><Button>CANCEL</Button></Link>
+        {errMsg && <p>{errMsg}</p>}
     </div>
 }
 

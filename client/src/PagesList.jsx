@@ -100,6 +100,8 @@ function PagesList(props) {
                     </Card.Header>
                     <Card.Body>
                         <Card.Text><PageDetails idPage={p.id}/></Card.Text>
+                        <Link to={`/pages/${p.id}`}><Card.Subtitle><Button>SHOW PAGE</Button></Card.Subtitle></Link>
+                        <br/>
                         <Card.Footer>
                             <Nav variant="tabs">
                                 <Nav.Item>
@@ -173,7 +175,6 @@ function PageDetails(props) {
             <Card key={b.id}>
                 <Card.Body>
                     <Card.Title>{b.content}</Card.Title>
-                    <Card.Subtitle>...........</Card.Subtitle>
                 </Card.Body>
             </Card>
         ))}

@@ -8,7 +8,7 @@ function BlockList(props) {
     const user = useContext(UserContext);
     const {idPage} = useParams();
 
-    const [type, setType] = useState("header");
+    const [type, setType] = useState(null);
     const [content, setContent] = useState(null);
     const [blocks, setBlocks] = useState([]);
     const [errMsg, setErrMsg] = useState('');
@@ -30,8 +30,8 @@ function BlockList(props) {
     const page = props.pages.filter((p) => (p.id == idPage))[0];
 
     async function handleAdd() {
-        if (content !== null) {
-            await addBlock(idPage, type, content, blocks.length+1);
+        if (content !== null && content !== "") {
+            await addBlock(idPage, type ? type : "header", content, blocks.length+1);
 
             getBlocks(idPage).then((list) => {
                 setBlocks(list);
@@ -76,10 +76,10 @@ function BlockList(props) {
 
             if(content !== null || type !== null)
                 await updateBlock(idPage, idBlock, newB.type, newB.content, newB.position);
+
+            setEditModeId(null);
         } else
             setErrMsg("PAGE MUST HAVE AT LEAST ONE HEADER TOGETHER WITH A PARAGRAPH OR IMAGE");
-
-        setEditModeId(null);
     }
 
     async function changePosUp(idBlock, type, content, position) {
@@ -127,9 +127,8 @@ function BlockList(props) {
     }
 
     return <div>
-        {errMsg && <p>{errMsg}</p>}
+        <Link to={`/`}><Button>GO BACK</Button></Link>
         <PageInfo page={page} />
-        <br/>
         {(user.id == page.idUser || user.role === "admin") && <Card key={lastId+1}><div>
                 <Form.Group controlId="addType">
                     <Form.Label className='fw-light'>Type</Form.Label>
@@ -154,6 +153,7 @@ function BlockList(props) {
                 <Button onClick={handleAdd}>ADD NEW BLOCK</Button>
             </div></Card>}
         <br/>
+        {errMsg && <p>{errMsg}</p>}
             {blocks.sort((a,b) => (a.position - b.position)).map((b) => {
                 lastId = b.id;
                 if (editModeId !== null && b.id == editModeId && b.idPage == idPage) {
