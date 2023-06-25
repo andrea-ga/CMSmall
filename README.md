@@ -8,69 +8,115 @@
 ## API Server
 
 - POST `/api/login`
-  - request parameters: none
-  - request body content: email, password
-  - response body content: post result
+  - description: login for users
+    - request parameters: none
+    - request body content: email, password
+    - response: `200 OK` (success)
 - POST `/api/logout`
-  - request parameters: none
-  - request body content: none
-  - response body content: post result
+  - description: logout for registered users 
+    - request parameters: none
+    - request body content: none
+    - response: `200 OK` (success)
 - GET `/api/users`
-  - request parameters: none
-  - request body content: none
-  - response body content: array of objects containing all users id and usernames
+  - description: get all users id and usernames
+    - request parameters: none
+    - request body content: none
+    - response: `200 OK` (success)
+    - response body content: array of objects containing all users id and usernames
+    - error responses: `500 Internal Server Error` (generic error)
 - GET `/api/users/:idUser`
-  - request parameters: user id
-  - request body content: none
-  - response body content: object containing user's username
+  - description: get user's username by id
+    - request parameters: user id
+    - request body content: none
+    - response: `200 OK` (success)
+    - response body content: object containing user's username
+    - error responses: `500 Internal Server Error` (generic error)
 - GET `/api/name`
-  - request parameters: none
-  - request body content: none
-  - response body content: object containing the website title
+  - description: get website name
+    - request parameters: none
+    - request body content: none
+    - response: `200 OK` (success)
+    - response body content: object containing the website title
+    - error responses: `500 Internal Server Error` (generic error)
 - PUT `/api/name`
-  - request parameters: none
-  - request body content: title
-  - response body content: put result
+  - description: update website name
+    - request parameters: none
+    - request body content: title
+    - response: `200 OK` (success)
+    - error responses: `500 Internal Server Error` (generic error),
+      `401 Unauthorized User` (user is not logged in)
 - GET `/api/pages/all`
-  - request parameters: none
-  - request body content: none
-  - response body content: array of objects containing all pages properties
+  - description: get all the pages 
+    - request parameters: none
+    - request body content: none
+    - response: `200 OK` (success)
+    - response body content: array of objects containing all pages properties
+    - error responses: `500 Internal Server Error` (generic error),
+      `401 Unauthorized User` (user is not logged in)
 - GET `/api/pages`
-  - request parameters: none
-  - request body content: none
-  - response body content: array of objects containing published pages properties
+  - description: get only the published pages
+    - request parameters: none
+    - request body content: none
+    - response: `200 OK` (success)
+    - response body content: array of objects containing published pages properties
+    - error responses: `500 Internal Server Error` (generic error)
 - POST `/api/pages`
-  - request parameters: none
-  - request body content: title, idUser, creationDate, publicationDate, blocks
-  - response body content: post result
+  - description: add a new page 
+    - request parameters: none
+    - request body content: title, idUser, creationDate, publicationDate, blocks
+    - response: `200 OK` (success)
+    - error responses: `500 Internal Server Error` (generic error),
+      `401 Unauthorized User` (user is not logged in)
 - PUT `/api/pages/:idPage`
-  - request parameters: idPage
-  - request body content: idPage, title, idUser, creationDate, publicationDate
-  - response body content: put result
+  - description: update a page 
+    - request parameters: idPage
+    - request body content: idPage, title, idUser, creationDate, publicationDate
+    - response: `200 OK` (success)
+    - error responses: `500 Internal Server Error` (generic error),
+      `401 Unauthorized User` (user is not logged in)
 - DELETE `/api/pages/:idPage`
-  - request parameters: idPage
-  - request body content: none
-  - response body content: delete result
+  - description: delete a page
+    - request parameters: idPage
+    - request body content: none
+    - response: `200 OK` (success)
+    - error responses: `500 Internal Server Error` (generic error),
+      `401 Unauthorized User` (user is not logged in)
 - GET `/api/pages/:idPage`
-  - request parameters: idPage
-  - request body content: none
-  - response body content: array of objects containing page's blocks (for all pages)
+  - description: get page's blocks 
+    - request parameters: idPage
+    - request body content: none
+    - response: `200 OK` (success)
+    - response body content: array of objects containing page's blocks (for all pages)
+    - error responses: `500 Internal Server Error` (generic error),
+      `401 Unauthorized User` (user is not logged in)
 - GET `/api/pages/pub/:idPage`
-  - request parameters: idPage
-  - request body content: none
-  - response body content: array of objects containing page's blocks (for only published pages)
+  - description: get page's blocks (only for published pages)
+    - request parameters: idPage
+    - request body content: none
+    - response: `200 OK` (success)
+    - response body content: array of objects containing page's blocks (for only published pages)
+    - error responses: `500 Internal Server Error` (generic error)
 - POST `/api/pages/:idPage`
-  - request parameters: idPage
-  - request body content: idPage, type, content, position
-  - response body content: post result
+  - description: add a new block to a page
+    - request parameters: idPage
+    - request body content: idPage, type, content, position
+    - response: `200 OK` (success)
+    - error responses: `500 Internal Server Error` (generic error),
+      `401 Unauthorized User` (user is not logged in)
 - PUT `/api/pages/:idPage/blocks/:idBlock`
-  - request parameters: idPage, idBlock
-  - request body content: idPage, idBlock, type, content, position
-  - response body content: put result
+  - description: edit a block 
+    - request parameters: idPage, idBlock
+    - request body content: idPage, idBlock, type, content, position
+    - response: `200 OK` (success)
+    - error responses: `500 Internal Server Error` (generic error),
+      `401 Unauthorized User` (user is not logged in)
 - DELETE `/api/pages/:idPage/blocks/:idBlock`
-  - request parameters: idPage, idBlock
-  - request body content: position
-  - response body content: delete result
+  - description: delete a block 
+    - request parameters: idPage, idBlock
+    - request body content: position
+    - response: `200 OK` (success)
+    - error responses: `500 Internal Server Error` (generic error),
+      `401 Unauthorized User` (user is not logged in)
 
 ## Database Tables
 
@@ -110,14 +156,33 @@ handles adding new blocks, editing blocks, deleting a block.
 
 ## Example Screenshot
 
+### Login
 ![login](./images/login.png)
+### Front-Office
+#### Front-Office pages
 ![front-office](./images/front-office.png)
+#### Front-Office page blocks
 ![front-office-page](./images/front-office-page.png)
-![admin-back-office](./images/admin-back-office.png)
-![admin-back-office-page](./images/admin-back-office-page.png)
-![update-page-props](./images/update-page-props.png)
+### Back-Office
+#### Back-Office page blocks (edit allowed only on user's pages)
+![author-back-office-page](./images/author-back-office-page.png)
+#### Back-Office page blocks (edit allowed only on user's pages)
+![author-back-office](./images/author-back-office.png)
+#### Edit Page Properties (allowed only on user's pages)
+![update-page-props-author](./images/update-page-props-author.png)
+#### Edit Page's Block Content
 ![update-block-content](./images/update-block-content.png)
+#### Add blocks to a new page
 ![add-blocks-new-page](./images/add-blocks-new-page.png)
+### Back-Office (Admin)
+#### Admin Edit Page Properties
+![update-page-props](./images/update-page-props.png)
+#### Admin Back-Office page
+![admin-back-office](./images/admin-back-office.png)
+#### Admin Back-Office page blocks
+![admin-back-office-page](./images/admin-back-office-page.png)
+#### Admin Change Website Name
+![admin-change-name](./images/admin-change-name.png)
 
 ## Users Credentials
 

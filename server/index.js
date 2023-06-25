@@ -61,12 +61,12 @@ const isLoggedIn = (req, res, next) => {
 
 //LOGIN
 app.post('/api/login', passport.authenticate('local'), (req, res) => {
-    res.json(req.user);
+    res.status(200).json(req.user);
 });
 
 //LOGOUT
 app.post('/api/logout', (req, res) => {
-    req.logout(()=>{res.end()});
+    req.logout(()=>{res.status(200).end()});
 })
 
 /******* WEBSITE OPERATIONS *******/
@@ -74,7 +74,7 @@ app.post('/api/logout', (req, res) => {
 //GET ALL USERS ID AND USERNAME
 app.get('/api/users', isLoggedIn, (req, res) => {
     userDao.getAllUsers().then((result) => {
-        res.json(result);
+        res.status(200).json(result);
     }).catch((error) => {
         res.status(500).send(error.message);
     });
@@ -84,7 +84,7 @@ app.get('/api/users', isLoggedIn, (req, res) => {
 app.get('/api/users/:idUser', (req, res) => {
     const id = req.params.idUser;
     userDao.getUserById(id).then((result) => {
-        res.json(result);
+        res.status(200).json(result);
     }).catch((error) => {
         res.status(500).send(error.message);
     });
@@ -93,7 +93,7 @@ app.get('/api/users/:idUser', (req, res) => {
 //GET WEBSITE NAME
 app.get('/api/name', (req, res) => {
     pagesDao.getWebsiteName().then((result) => {
-        res.json(result);
+        res.status(200).json(result);
     }).catch((error) => {
         res.status(500).send(error.message);
     });
@@ -103,7 +103,7 @@ app.get('/api/name', (req, res) => {
 app.put('/api/name', isLoggedIn, (req, res) => {
     const website = new Website(null, req.body.title);
     pagesDao.updateWebsiteName(website).then((result) => {
-        res.end();
+        res.status(200).end();
     }).catch((error) => {
         res.status(500).send(error.message);
     });
@@ -114,7 +114,7 @@ app.put('/api/name', isLoggedIn, (req, res) => {
 //GET ALL PAGES (PUBLISHED AND NOT)
 app.get('/api/pages/all', isLoggedIn, (req, res) => {
     pagesDao.getAllPages().then((result) => {
-        res.json(result);
+        res.status(200).json(result);
     }).catch((error) => {
         res.status(500).send(error.message);
     });
@@ -123,7 +123,7 @@ app.get('/api/pages/all', isLoggedIn, (req, res) => {
 //GET ONLY PUBLISHED PAGES
 app.get('/api/pages', (req, res) => {
     pagesDao.getPages().then((result) => {
-        res.json(result);
+        res.status(200).json(result);
     }).catch((error) => {
         res.status(500).send(error.message);
     });
@@ -138,7 +138,7 @@ app.post('/api/pages', isLoggedIn, (req, res) => {
                 const idPage = pages.sort((a,b) => (b.id - a.id))[0].id;
                 const block = new Block(null, idPage, b.type, b.content, b.position);
                 pagesDao.createBlock(block).then((result) => {
-                    res.end();
+                    res.status(200).end();
                 }).catch((error) => {
                     res.set('Content-Type: text/plain');
                     res.status(500).send(error.message);
@@ -159,7 +159,7 @@ app.put('/api/pages/:idPage', isLoggedIn, (req, res) => {
     const idPage = req.params.idPage;
     const page = new Page(null, req.body.title, req.body.idUser, req.body.creationDate, req.body.publicationDate);
     pagesDao.updatePage(idPage, page).then((result) => {
-        res.end();
+        res.status(200).end();
     }).catch((error) => {
         res.status(500).send(error.message);
     });
@@ -173,13 +173,13 @@ app.delete('/api/pages/:idPage', isLoggedIn, (req, res) => {
             if(list.length != 0) {
                 pageBlocks.map((b) => {
                     pagesDao.deleteBlock(idPage, b.id).then((result) => {
-                        res.end();
+                        res.status(200).end();
                     }).catch((error) => {
                         res.status(500).send(error.message);
                     });
                 })
             } else
-                res.end();
+                res.status(200).end();
         }).catch((error) => {
             res.status(500).send(error.message);
         });
@@ -195,7 +195,7 @@ app.get('/api/pages/:idPage', isLoggedIn, (req, res) => {
     const idPage = req.params.idPage;
 
     pagesDao.getPageContent(idPage).then((result) => {
-        res.json(result);
+        res.status(200).json(result);
     }).catch((error) => {
         res.status(500).send(error.message);
     });
@@ -206,7 +206,7 @@ app.get('/api/pages/pub/:idPage', (req, res) => {
     const idPage = req.params.idPage;
 
     pagesDao.getPubPageContent(idPage).then((result) => {
-        res.json(result);
+        res.status(200).json(result);
     }).catch((error) => {
         res.status(500).send(error.message);
     });
@@ -216,7 +216,7 @@ app.get('/api/pages/pub/:idPage', (req, res) => {
 app.post('/api/pages/:idPage', isLoggedIn, (req, res) => {
     const block = new Block(null, req.params.idPage, req.body.type, req.body.content, req.body.position);
     pagesDao.createBlock(block).then((result) => {
-        res.end();
+        res.status(200).end();
     }).catch((error) => {
         res.set('Content-Type: text/plain');
         res.status(500).send(error.message);
@@ -229,7 +229,7 @@ app.put('/api/pages/:idPage/blocks/:idBlock', isLoggedIn, (req, res) => {
     const idBlock = req.params.idBlock;
     const block = new Block(null, req.body.idPage, req.body.type, req.body.content, req.body.position);
     pagesDao.updateBlock(idPage, idBlock, block).then((result) => {
-        res.end();
+        res.status(200).end();
     }).catch((error) => {
         res.status(500).send(error.message);
     });
@@ -247,13 +247,13 @@ app.delete('/api/pages/:idPage/blocks/:idBlock', isLoggedIn, (req, res) => {
             if(blocksToUpdate.length != 0) {
                 blocksToUpdate.map(b => {
                     pagesDao.updateBlock(b.idPage, b.id, {...b, position: b.position-1}).then((result) => {
-                        res.end();
+                        res.status(200).end();
                     }).catch((error) => {
                         res.status(500).send(error.message);
                     });
                 });
             } else
-                res.end();
+                res.status(200).end();
         }).catch((error) => {
             res.status(500).send(error.message);
         });
