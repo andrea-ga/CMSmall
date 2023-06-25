@@ -1,12 +1,8 @@
 import {Link, useNavigate, useParams} from "react-router-dom";
 import {useContext, useEffect, useState} from "react";
 import {getBlocks, updateBlock} from "./API.js";
-import {Button, Card, CardGroup, Form, Nav} from "react-bootstrap";
+import {Button, Card, Form, Nav} from "react-bootstrap";
 import {PageInfo} from "./BlockList.jsx";
-import star from "../img/star.png";
-import circle from "../img/circle.png";
-import point from "../img/point.png";
-import phone from "../img/phone.png";
 import UserContext from "./UserContext.js";
 
 function EditBlock(props) {
@@ -116,10 +112,10 @@ function EditBlock(props) {
                             </Nav>
                         </Card.Header>
                         <Card.Body>
-                            {b.type === "image" && b.content === "star" ? <Card.Subtitle><img src={star} alt={b.content}/></Card.Subtitle> : ""}
-                            {b.type === "image" && b.content === "circle" ? <Card.Subtitle><img src={circle} alt={b.content}/></Card.Subtitle> : ""}
-                            {b.type === "image" && b.content === "point" ? <Card.Subtitle><img src={point} alt={b.content}/></Card.Subtitle> : ""}
-                            {b.type === "image" && b.content === "phone" ? <Card.Subtitle><img src={phone} alt={b.content}/></Card.Subtitle> : ""}
+                            {b.type === "image" && b.content === "star" ? <Card.Subtitle><img src='/img/star.png' alt={b.content}/></Card.Subtitle> : ""}
+                            {b.type === "image" && b.content === "circle" ? <Card.Subtitle><img src='/img/circle.png' alt={b.content}/></Card.Subtitle> : ""}
+                            {b.type === "image" && b.content === "point" ? <Card.Subtitle><img src='/img/point.png' alt={b.content}/></Card.Subtitle> : ""}
+                            {b.type === "image" && b.content === "phone" ? <Card.Subtitle><img src='/img/phone.png' alt={b.content}/></Card.Subtitle> : ""}
                             {b.type !== "image" ? <Card.Subtitle><p>{b.content}</p></Card.Subtitle> : ""}
                         </Card.Body>
                     </Card>
