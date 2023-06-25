@@ -1,5 +1,78 @@
 const APIURL = 'http://localhost:3000/api';
 
+async function checkLogin(username, password) {
+    try {
+        const response = await fetch(APIURL + '/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include',
+            body: JSON.stringify({
+                username: username,
+                password: password
+            })
+        });
+        if (response.ok) {
+            return await response.json();
+        } else {
+            const message = await response.text();
+            throw new Error(response.statusText + " " + message);
+        }
+    } catch (error) {
+        throw new Error(error.message, { cause: error });
+    }
+}
+
+async function doLogout() {
+    try {
+        const response = await fetch(APIURL + '/logout', {
+            method: 'POST',
+            credentials: 'include'
+        });
+        if (response.ok) {
+            return true ;
+        } else {
+            const message = await response.text();
+            throw new Error(response.statusText + " " + message);
+        }
+    } catch (error) {
+        throw new Error(error.message, { cause: error });
+    }
+}
+
+async function getAllAuthors() {
+    try {
+        const response = await fetch(APIURL + `/users`, {
+            credentials: 'include'
+        });
+        if (response.ok) {
+            return await response.json();
+        } else {
+            const message = await response.text();
+            throw new Error(response.statusText + " " + message);
+        }
+    } catch (error) {
+        throw new Error(error.message, { cause: error });
+    }
+}
+
+async function getUsername(idUser) {
+    try {
+        const response = await fetch(APIURL + `/users/${idUser}`, {
+            credentials: 'include'
+        });
+        if (response.ok) {
+            return await response.json();
+        } else {
+            const message = await response.text();
+            throw new Error(response.statusText + " " + message);
+        }
+    } catch (error) {
+        throw new Error(error.message, { cause: error });
+    }
+}
+
 async function getWebsiteName() {
     try {
         const response = await fetch(APIURL + '/name', {
@@ -62,64 +135,6 @@ async function getPages() {
         });
         if (response.ok) {
             return await response.json();
-        } else {
-            const message = await response.text();
-            throw new Error(response.statusText + " " + message);
-        }
-    } catch(e) {
-        throw new Error(e.message, { cause: e });
-    }
-}
-
-async function getBlocks(idPage) {
-    try {
-        const response = await fetch(APIURL + `/pages/${idPage}`, {
-            credentials: 'include'
-        });
-        if (response.ok) {
-            return await response.json();
-        } else {
-            const message = await response.text();
-            throw new Error(response.statusText + " " + message);
-        }
-    } catch(e) {
-        throw new Error(e.message, { cause: e });
-    }
-}
-
-async function getPubBlocks(idPage) {
-    try {
-        const response = await fetch(APIURL + `/pages/pub/${idPage}`, {
-            credentials: 'include'
-        });
-        if (response.ok) {
-            return await response.json();
-        } else {
-            const message = await response.text();
-            throw new Error(response.statusText + " " + message);
-        }
-    } catch(e) {
-        throw new Error(e.message, { cause: e });
-    }
-}
-
-async function updateBlock(idPage, idBlock, type, content, position) {
-    try {
-        const response = await fetch(APIURL + `/pages/${idPage}/blocks/${idBlock}`, {
-            method: "PUT",
-            headers: {
-                'Content-Type': "application/json"
-            },
-            credentials: 'include',
-            body: JSON.stringify({
-                "idPage": idPage,
-                "type": type,
-                "content": content,
-                "position": position
-            })
-        });
-        if (response.ok) {
-            return await response.json;
         } else {
             const message = await response.text();
             throw new Error(response.statusText + " " + message);
@@ -202,6 +217,38 @@ async function deletePage(idPage) {
     }
 }
 
+async function getBlocks(idPage) {
+    try {
+        const response = await fetch(APIURL + `/pages/${idPage}`, {
+            credentials: 'include'
+        });
+        if (response.ok) {
+            return await response.json();
+        } else {
+            const message = await response.text();
+            throw new Error(response.statusText + " " + message);
+        }
+    } catch(e) {
+        throw new Error(e.message, { cause: e });
+    }
+}
+
+async function getPubBlocks(idPage) {
+    try {
+        const response = await fetch(APIURL + `/pages/pub/${idPage}`, {
+            credentials: 'include'
+        });
+        if (response.ok) {
+            return await response.json();
+        } else {
+            const message = await response.text();
+            throw new Error(response.statusText + " " + message);
+        }
+    } catch(e) {
+        throw new Error(e.message, { cause: e });
+    }
+}
+
 async function addBlock(idPage, type, content, position) {
     try {
         const response = await fetch(APIURL + `/pages/${idPage}`, {
@@ -215,6 +262,32 @@ async function addBlock(idPage, type, content, position) {
                 type: type,
                 content: content,
                 position: position
+            })
+        });
+        if (response.ok) {
+            return await response.json;
+        } else {
+            const message = await response.text();
+            throw new Error(response.statusText + " " + message);
+        }
+    } catch(e) {
+        throw new Error(e.message, { cause: e });
+    }
+}
+
+async function updateBlock(idPage, idBlock, type, content, position) {
+    try {
+        const response = await fetch(APIURL + `/pages/${idPage}/blocks/${idBlock}`, {
+            method: "PUT",
+            headers: {
+                'Content-Type': "application/json"
+            },
+            credentials: 'include',
+            body: JSON.stringify({
+                "idPage": idPage,
+                "type": type,
+                "content": content,
+                "position": position
             })
         });
         if (response.ok) {
@@ -248,79 +321,6 @@ async function deleteBlock(idPage, idBlock, position) {
         }
     } catch(e) {
         throw new Error(e.message, { cause: e });
-    }
-}
-
-async function checkLogin(username, password) {
-    try {
-        const response = await fetch(APIURL + '/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            credentials: 'include',
-            body: JSON.stringify({
-                username: username,
-                password: password
-            })
-        });
-        if (response.ok) {
-            return await response.json();
-        } else {
-            const message = await response.text();
-            throw new Error(response.statusText + " " + message);
-        }
-    } catch (error) {
-        throw new Error(error.message, { cause: error });
-    }
-}
-
-async function doLogout() {
-    try {
-        const response = await fetch(APIURL + '/logout', {
-            method: 'POST',
-            credentials: 'include'
-        });
-        if (response.ok) {
-            return true ;
-        } else {
-            const message = await response.text();
-            throw new Error(response.statusText + " " + message);
-        }
-    } catch (error) {
-        throw new Error(error.message, { cause: error });
-    }
-}
-
-async function getUsername(idUser) {
-    try {
-        const response = await fetch(APIURL + `/users/${idUser}`, {
-            credentials: 'include'
-        });
-        if (response.ok) {
-            return await response.json();
-        } else {
-            const message = await response.text();
-            throw new Error(response.statusText + " " + message);
-        }
-    } catch (error) {
-        throw new Error(error.message, { cause: error });
-    }
-}
-
-async function getAllAuthors() {
-    try {
-        const response = await fetch(APIURL + `/users`, {
-            credentials: 'include'
-        });
-        if (response.ok) {
-            return await response.json();
-        } else {
-            const message = await response.text();
-            throw new Error(response.statusText + " " + message);
-        }
-    } catch (error) {
-        throw new Error(error.message, { cause: error });
     }
 }
 

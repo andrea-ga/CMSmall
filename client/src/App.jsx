@@ -58,17 +58,11 @@ function App() {
         setEditMode(false);
     }
 
-    async function handleDelete(idPage) {
-        setPages((old) => old.filter((p) => p.id != idPage));
-
-        await deletePage(idPage);
-    }
-
     return <UserContext.Provider value={user}>
     <BrowserRouter>
         <Routes>
             <Route element={<MainLayout handleLogout={handleLogout} handleChangeName={handleChangeName} handleCancelChangeName={handleCancelChangeName} title={title} setTitle={setTitle} editMode={editMode} setEditMode={setEditMode} />}>
-                <Route index element={<PagesList handleDelete={handleDelete} pages={pages} setPages={setPages} />} />
+                <Route index element={<PagesList pages={pages} setPages={setPages} />} />
                 <Route path='/login' element={<LoginForm validateLogin={validateLogin}/>}/>
                 <Route path='/pages/:idPage'
                        element={<BlockList pages={pages} />} />

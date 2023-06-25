@@ -1,6 +1,6 @@
 import {Card, CardGroup, Button, Form, Nav} from 'react-bootstrap';
 import {useContext, useEffect, useState} from "react";
-import {getAllAuthors, getBlocks, getPubBlocks, getUsername, updatePage} from "./API.js";
+import {deletePage, getAllAuthors, getBlocks, getPubBlocks, getUsername, updatePage} from "./API.js";
 import {Link} from "react-router-dom";
 import UserContext from "./UserContext.js";
 import dayjs from "dayjs";
@@ -40,6 +40,12 @@ function PagesList(props) {
         setEditModeId(null);
     }
 
+    async function handleDelete(idPage) {
+        setPages((old) => old.filter((p) => p.id != idPage));
+
+        await deletePage(idPage);
+    }
+
     return <div>
         {user.id && <Card key={lastId+1}>
             <div>
@@ -67,7 +73,7 @@ function PagesList(props) {
                                     <Form.Control type="text" defaultValue={p.title} onChange={(ev) => setTitle(ev.target.value)}></Form.Control>
                                 </Nav.Item>
                                 {(user.id == p.idUser || user.role === "admin") && <Nav.Item>
-                                    <Link to={`/`}><Button variant ="danger" onClick={() => props.handleDelete(p.id)}>Delete</Button></Link>
+                                    <Link to={`/`}><Button variant ="danger" onClick={() => handleDelete(p.id)}>Delete</Button></Link>
                                 </Nav.Item>}
                             </Nav>
                         </Card.Header>
@@ -94,7 +100,7 @@ function PagesList(props) {
                                 <Card.Header><Button onClick={() => setEditModeId(p.id)}>EDIT PAGE INFO</Button></Card.Header>
                             </Nav.Item>}
                             {(user.id == p.idUser || user.role === "admin") && <Nav.Item>
-                                <Card.Header><Link to={`/`}><Button variant ="danger" onClick={() => props.handleDelete(p.id)}>DELETE</Button></Link></Card.Header>
+                                <Card.Header><Link to={`/`}><Button variant ="danger" onClick={() => handleDelete(p.id)}>DELETE</Button></Link></Card.Header>
                             </Nav.Item>}
                         </Nav>
                     </Card.Header>

@@ -56,9 +56,9 @@ function AddPage(props) {
             }
 
             if(!headerFound)
-                setErrMsg("NON C'è HEADER");
+                setErrMsg("THERE'S NO HEADER");
             else if(!parImgFound)
-                setErrMsg("NON C'è PARAGRAPH o IMAGE");
+                setErrMsg("THERE'S NO PARAGRAPH OR IMAGE");
             else
                 setErrMsg("");
         } catch (error) {
@@ -127,7 +127,7 @@ function AddPage(props) {
             <Card><Button onClick={addMoreBlocks}>ADD BLOCK</Button></Card>
         <br/>
             {blocks.sort((a,b) => (a.position - b.position)).map((b) => (
-                <div><Card key={b.id}>
+                <div key={b.id}><Card>
                      <Card.Header>
                          <Nav>
                              <Nav.Item>

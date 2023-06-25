@@ -224,13 +224,13 @@ function BlockList(props) {
                         </Card.Header>
                         <Card.Body>
                             {b.type === "image" && b.content === "star" ?
-                                <Card.Subtitle><img src='/img/star.png' alt={b.content}/></Card.Subtitle> : ""}
+                                <Card.Subtitle><img width="100" height="100" src='/img/star.png' alt={b.content}/></Card.Subtitle> : ""}
                             {b.type === "image" && b.content === "circle" ?
-                                <Card.Subtitle><img src='/img/circle.png' alt={b.content}/></Card.Subtitle> : ""}
+                                <Card.Subtitle><img width="100" height="100" src='/img/circle.png' alt={b.content}/></Card.Subtitle> : ""}
                             {b.type === "image" && b.content === "point" ?
-                                <Card.Subtitle><img src='/img/point.png' alt={b.content}/></Card.Subtitle> : ""}
+                                <Card.Subtitle><img width="100" height="100" src='/img/point.png' alt={b.content}/></Card.Subtitle> : ""}
                             {b.type === "image" && b.content === "phone" ?
-                                <Card.Subtitle><img src='/img/phone.png' alt={b.content}/></Card.Subtitle> : ""}
+                                <Card.Subtitle><img width="100" height="100" src='/img/phone.png' alt={b.content}/></Card.Subtitle> : ""}
                             {b.type !== "image" ? <Card.Subtitle><p>{b.content}</p></Card.Subtitle> : ""}
                         </Card.Body>
                     </Card></div>
