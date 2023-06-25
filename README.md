@@ -155,34 +155,21 @@ handles adding new blocks, editing blocks, deleting a block.
 # Usage info
 
 ## Example Screenshot
+### Creating a new page
+#### The insertion of the page properties can be done from the homepage
+![author-back-office](./images/author-add-page.png)
+#### Pressing on Add New Page will redirect to adding the blocks for the new page
+![add-blocks-new-page](./images/add-blocks-new-page.png)
 
-### Login
-![login](./images/login.png)
-### Front-Office
+### List of all pages
 #### Front-Office pages
 ![front-office](./images/front-office.png)
 #### Front-Office page blocks
 ![front-office-page](./images/front-office-page.png)
-### Back-Office
-#### Back-Office page blocks (edit allowed only on user's pages)
-![author-back-office-page](./images/author-back-office-page.png)
-#### Back-Office page blocks (edit allowed only on user's pages)
+#### Back-Office pages
 ![author-back-office](./images/author-back-office.png)
-#### Edit Page Properties (allowed only on user's pages)
-![update-page-props-author](./images/update-page-props-author.png)
-#### Edit Page's Block Content
-![update-block-content](./images/update-block-content.png)
-#### Add blocks to a new page
-![add-blocks-new-page](./images/add-blocks-new-page.png)
-### Back-Office (Admin)
-#### Admin Edit Page Properties
-![update-page-props](./images/update-page-props.png)
-#### Admin Back-Office page
-![admin-back-office](./images/admin-back-office.png)
-#### Admin Back-Office page blocks
-![admin-back-office-page](./images/admin-back-office-page.png)
-#### Admin Change Website Name
-![admin-change-name](./images/admin-change-name.png)
+#### Back-Office page blocks
+![author-back-office-page](./images/author-back-office-page.png)
 
 ## Users Credentials
 
