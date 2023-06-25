@@ -78,7 +78,7 @@ function PagesList(props) {
                                     <Form.Control type="text" defaultValue={p.title} onChange={(ev) => setTitle(ev.target.value)}></Form.Control>
                                 </Nav.Item>
                                 {(user.id == p.idUser || user.role === "admin") && <Nav.Item>
-                                    <Link to={`/`}><Button disabled={waiting} variant ="danger" onClick={() => handleDelete(p.id)}>Delete</Button></Link>
+                                    <Link to={`/`}><Button disabled={waiting} variant ="danger" onClick={() => handleDelete(p.id)}>DELETE</Button></Link>
                                 </Nav.Item>}
                             </Nav>
                         </Card.Header>
@@ -87,8 +87,8 @@ function PagesList(props) {
                                 <GetAllAuthors idPage={p.id} setIdUser={setIdUser} /></div>}</Card.Footer>
                             <Card.Footer><Form.Label>Publication Date</Form.Label>
                                 <Form.Control type="date" defaultValue={p.publicationDate} onChange={(ev) => setPublicationDate(ev.target.value)}></Form.Control></Card.Footer>
-                            <Card.Footer><Button disabled={waiting} onClick={() => handleEdit(p.id)}>Update</Button>
-                                <Button onClick={() => setEditModeId(null)}>Cancel</Button></Card.Footer>
+                            <Card.Footer><Button disabled={waiting} onClick={() => handleEdit(p.id)}>UPDATE</Button>
+                                <Button onClick={() => setEditModeId(null)}>CANCEL</Button></Card.Footer>
                         </Card.Body>
                     </Card>
                     <br/></div>
@@ -121,10 +121,10 @@ function PagesList(props) {
 
                                 <Nav.Item class="navbar-nav me-auto mb-2 mb-lg-0"></Nav.Item>
                                 <Nav.Item>
-                                    <Card.Footer><p>Created on: {p.creationDate}</p></Card.Footer>
+                                    <Card.Footer><p>Creation Date: {p.creationDate}</p></Card.Footer>
                                 </Nav.Item>
                                 <Nav.Item>
-                                    <Card.Footer><p>Published on: {p.publicationDate}</p></Card.Footer>
+                                    <Card.Footer><p>Publication Date: {p.publicationDate}</p></Card.Footer>
                                 </Nav.Item>
                             </Nav>
                         </Card.Footer>
