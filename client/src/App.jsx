@@ -7,9 +7,7 @@ import {checkLogin, deletePage, doLogout, getAllPages, getPages, getWebsiteName,
 import { PagesList } from "./PagesList";
 import { BlockList } from "./BlockList.jsx";
 import { AddPage } from "./AddPage.jsx";
-import { EditPage } from "./EditPage.jsx";
 import { AddBlock } from "./AddBlock.jsx";
-import { EditBlock } from "./EditBlock.jsx";
 import { LoginForm } from "./Login.jsx";
 import UserContext from "./UserContext.js";
 import {PageNotFound} from "./PageNotFound.jsx";
@@ -77,12 +75,8 @@ function App() {
                        element={<BlockList pages={pages} />} />
                 <Route path='/pages/add'
                        element={<AddPage setPages={setPages} />} />
-                <Route path='/pages/:idPage/edit'
-                       element={<EditPage pages={pages} setPages={setPages} />} />
                 <Route path='/pages/:idPage/blocks/add'
                        element={<AddBlock />} />
-                <Route path='/pages/:idPage/blocks/:idBlock/edit'
-                       element={<EditBlock pages={pages}/>} />
                 <Route path='*' element={<PageNotFound />} />
             </Route>
         </Routes>

@@ -1,15 +1,19 @@
-import {Button, Card, Col, Nav, Row} from "react-bootstrap";
+import {Button, Card, Col, Form, Nav, Row} from "react-bootstrap";
 import {Link, useParams} from "react-router-dom";
 import {useContext, useEffect, useState} from "react";
-import {deleteBlock, getBlocks, getPubBlocks, updateBlock} from "./API.js";
+import {addBlock, deleteBlock, getBlocks, getPubBlocks, updateBlock} from "./API.js";
 import UserContext from "./UserContext.js";
 
 function BlockList(props) {
     const user = useContext(UserContext);
     const {idPage} = useParams();
 
+    const [type, setType] = useState("header");
+    const [content, setContent] = useState(null);
     const [blocks, setBlocks] = useState([]);
     const [errMsg, setErrMsg] = useState('');
+    const [editModeId, setEditModeId] = useState(null);
+    let lastId;
 
     useEffect(() => {
         if(user.id) {
@@ -24,6 +28,59 @@ function BlockList(props) {
     }, [idPage, user]);
 
     const page = props.pages.filter((p) => (p.id == idPage))[0];
+
+    async function handleAdd() {
+        if (content !== null) {
+            await addBlock(idPage, type, content, blocks.length+1);
+
+            getBlocks(idPage).then((list) => {
+                setBlocks(list);
+            });
+
+            setErrMsg("");
+        }
+        else
+            setErrMsg("CONTENT CAN'T BE EMPTY");
+    }
+
+    async function handleEdit(idBlock) {
+        const header = (type === "header")
+            || (type === null && blocks.find((b) => b.id == idBlock && b.type === "header"))
+            || blocks.find((b) => b.id != idBlock && b.type === "header");
+        const parOrImg = (type === "paragraph" || type === "image")
+            || (type === null && blocks.find((b) => b.id == idBlock && (b.type === "paragraph" || b.type === "image")))
+            || blocks.find((b) => b.id != idBlock && (b.type === "paragraph" || b.type === "image"));
+
+        if(content === "") {
+            setErrMsg("CONTENT CAN'T BE EMPTY");
+        }
+        else if(content === null && type === "image" && blocks.filter((b) => b.id == idBlock)[0].type !== "image") {
+            setErrMsg("MUST SELECT AN IMAGE FROM THE LIST");
+        }
+        else if(header && parOrImg) {
+            let newB = "";
+            setBlocks(blocks.map(b => {
+                if(b.id == idBlock && b.idPage == idPage) {
+                    newB = b;
+
+                    if(type !== null)
+                        newB = {...newB, type: type};
+                    if(content !== null)
+                        newB = {...newB, content: content};
+
+                    return newB;
+                }
+                else
+                    return b;
+            }));
+
+            if(content !== null || type !== null)
+                await updateBlock(idPage, idBlock, newB.type, newB.content, newB.position);
+        } else
+            setErrMsg("PAGE MUST HAVE AT LEAST ONE HEADER TOGETHER WITH A PARAGRAPH OR IMAGE");
+
+        setEditModeId(null);
+    }
 
     async function changePosUp(idBlock, type, content, position) {
         if(position !== 1) {
@@ -54,11 +111,16 @@ function BlockList(props) {
         const parOrImg = blocks.find((b) => b.id != block.id && (b.type === "paragraph" || b.type === "image"));
 
         if(header && parOrImg) {
-            const pos = block.position;
-            setBlocks(blocks.filter((b) => b.id != block.id && b.idPage == block.idPage));
-            setBlocks((old) => (old.map(b => b.position > pos  ? {...b, position: b.position-1} : b)));
+            await deleteBlock(block.idPage, block.id, block.position);
 
-            await deleteBlock(block.idPage, block.id);
+            setBlocks((old) => old.map(b => (b.position > block.position ? {...b, position: b.position-1} : b)));
+            setBlocks(blocks.filter((b) => b.id != block.id && b.idPage == block.idPage));
+
+            getBlocks(idPage).then((list) => {
+                setBlocks(list);
+            });
+
+            setErrMsg("");
         } else {
             setErrMsg("PAGE MUST HAVE AT LEAST ONE HEADER TOGETHER WITH A PARAGRAPH OR IMAGE");
         }
@@ -68,42 +130,112 @@ function BlockList(props) {
         {errMsg && <p>{errMsg}</p>}
         <PageInfo page={page} />
         <br/>
-        {(user.id == page.idUser || user.role === "admin") && <Link to={`/pages/${idPage}/blocks/add`}><Button>Add Block</Button></Link>}
-        <Link to={`/`}><Button>Go Back</Button></Link>
-            {blocks.sort((a,b) => (a.position - b.position)).map((b) => (
-                <Card key={b.id}>
-                    <Card.Header>
-                        <Nav>
-                            <Nav.Item>
-                                <Card.Header><p>{b.type}</p></Card.Header>
-                            </Nav.Item>
-                            <Nav.Item>
-                                <Card.Header><p>Position: {b.position}</p></Card.Header>
-                            </Nav.Item>
-                            <Nav.Item>
-                                {(user.id == page.idUser || user.role === "admin") && <Card.Header><p onClick={() => {changePosUp(b.id, b.type, b.content, b.position)}}>↑</p></Card.Header>}
-                            </Nav.Item>
-                            <Nav.Item>
-                                {(user.id == page.idUser || user.role === "admin") && <Card.Header><p onClick={() => {changePosDown(b.id, b.type, b.content, b.position)}}>↓</p></Card.Header>}
-                            </Nav.Item>
-                            <Nav.Item class="navbar-nav me-auto mb-2 mb-lg-0"></Nav.Item>
-                            <Nav.Item >
-                                {(user.id == page.idUser || user.role === "admin") && <Link to={`/pages/${idPage}/blocks/${b.id}/edit`}><Card.Header><Button>EDIT BLOCK</Button></Card.Header></Link>}
-                            </Nav.Item>
-                            <Nav.Item>
-                                {(user.id == page.idUser || user.role === "admin") && <Link to={`/pages/${idPage}`}><Card.Header><Button variant="danger" onClick={() => handleDelete(b)}>DELETE BLOCK</Button></Card.Header></Link>}
-                            </Nav.Item>
-                        </Nav>
-                    </Card.Header>
-                    <Card.Body>
-                        {b.type === "image" && b.content === "star" ? <Card.Subtitle><img src='/img/star.png' alt={b.content}/></Card.Subtitle> : ""}
-                        {b.type === "image" && b.content === "circle" ? <Card.Subtitle><img src='/img/circle.png' alt={b.content}/></Card.Subtitle> : ""}
-                        {b.type === "image" && b.content === "point" ? <Card.Subtitle><img src='/img/point.png' alt={b.content}/></Card.Subtitle> : ""}
-                        {b.type === "image" && b.content === "phone" ? <Card.Subtitle><img src='/img/phone.png' alt={b.content}/></Card.Subtitle> : ""}
-                        {b.type !== "image" ? <Card.Subtitle><p>{b.content}</p></Card.Subtitle> : ""}
-                    </Card.Body>
-                </Card>
-            ))}
+        {(user.id == page.idUser || user.role === "admin") && <Card key={lastId+1}><div>
+                <Form.Group controlId="addType">
+                    <Form.Label className='fw-light'>Type</Form.Label>
+                    <Form.Select aria-label="Type select" defaultValue="header" onChange={(ev) => (setType(ev.target.value))}>
+                        <option value="header">Header</option>
+                        <option value="paragraph">Paragraph</option>
+                        <option value="image">Image</option>
+                    </Form.Select>
+                </Form.Group>
+                <Form.Group controlId="addContent">
+                    <Form.Label className='fw-light'>Content</Form.Label>
+                    {type !== "image" ? <Form.Control as="textarea" aria-label="With textarea" name="content" placeholder="Enter Content" onChange={(ev) => {setContent(ev.target.value)}}></Form.Control> : ""}
+                    {type === "image" ? <Form.Select aria-label="Image select" onChange={(ev) => (setContent(ev.target.value))}>
+                        <option>Select Image</option>
+                        <option value="star">Star</option>
+                        <option value="circle">Circle</option>
+                        <option value="point">Point</option>
+                        <option value="phone">Phone</option>
+                    </Form.Select> : ""}
+                </Form.Group>
+                <br/>
+                <Button onClick={handleAdd}>ADD NEW BLOCK</Button>
+            </div></Card>}
+        <br/>
+            {blocks.sort((a,b) => (a.position - b.position)).map((b) => {
+                lastId = b.id;
+                if (editModeId !== null && b.id == editModeId && b.idPage == idPage) {
+                    return <Card bg="info" key={b.id}>
+                        <Card.Body>
+                            <Form.Group controlId="addType">
+                                <Form.Label className='fw-light'>Type</Form.Label>
+                                <Form.Select aria-label="Type select" defaultValue={b.type}
+                                             onChange={(ev) => (setType(ev.target.value))}>
+                                    <option value="header">Header</option>
+                                    <option value="paragraph">Paragraph</option>
+                                    <option value="image">Image</option>
+                                </Form.Select>
+                            </Form.Group>
+                            <Form.Group controlId="addContent">
+                                <Form.Label className='fw-light'>Content</Form.Label>
+                                {((type !== "image" && type !== null) || (type === null && b.type !== "image")) ?
+                                    <Form.Control type="text" name="content" defaultValue={b.content}
+                                                  onChange={(ev) => (setContent(ev.target.value))}></Form.Control> : ""}
+                                {(type === "image" || (type === null && b.type === "image")) ?
+                                    <Form.Select aria-label="Image select" defaultValue={b.content}
+                                                 onChange={(ev) => (setContent(ev.target.value))}>
+                                        <option>Select Image</option>
+                                        <option value="star">Star</option>
+                                        <option value="circle">Circle</option>
+                                        <option value="point">Point</option>
+                                        <option value="phone">Phone</option>
+                                    </Form.Select> : ""}
+                            </Form.Group>
+                            <Card.Footer><Button onClick={() => handleEdit(b.id)}>Update</Button>
+                                <Button onClick={() => setEditModeId(null)}>Cancel</Button></Card.Footer>
+                        </Card.Body>
+                    </Card>
+                } else {
+                    return <div key={b.id}><Card>
+                        <Card.Header>
+                            <Nav>
+                                <Nav.Item>
+                                    <Card.Header><p>{b.type}</p></Card.Header>
+                                </Nav.Item>
+                                <Nav.Item>
+                                    <Card.Header><p>Position: {b.position}</p></Card.Header>
+                                </Nav.Item>
+                                <Nav.Item>
+                                    {(user.id == page.idUser || user.role === "admin") &&
+                                        <Card.Header><p onClick={() => {
+                                            changePosUp(b.id, b.type, b.content, b.position)
+                                        }}>↑</p></Card.Header>}
+                                </Nav.Item>
+                                <Nav.Item>
+                                    {(user.id == page.idUser || user.role === "admin") &&
+                                        <Card.Header><p onClick={() => {
+                                            changePosDown(b.id, b.type, b.content, b.position)
+                                        }}>↓</p></Card.Header>}
+                                </Nav.Item>
+                                <Nav.Item class="navbar-nav me-auto mb-2 mb-lg-0"></Nav.Item>
+                                <Nav.Item>
+                                    {(user.id == page.idUser || user.role === "admin") &&
+                                       <Card.Header><Button onClick={() => setEditModeId(b.id)}>EDIT BLOCK</Button></Card.Header>}
+                                </Nav.Item>
+                                <Nav.Item>
+                                    {(user.id == page.idUser || user.role === "admin") &&
+                                        <Link to={`/pages/${idPage}`}><Card.Header><Button variant="danger"
+                                                                                           onClick={() => handleDelete(b)}>DELETE
+                                            BLOCK</Button></Card.Header></Link>}
+                                </Nav.Item>
+                            </Nav>
+                        </Card.Header>
+                        <Card.Body>
+                            {b.type === "image" && b.content === "star" ?
+                                <Card.Subtitle><img src='/img/star.png' alt={b.content}/></Card.Subtitle> : ""}
+                            {b.type === "image" && b.content === "circle" ?
+                                <Card.Subtitle><img src='/img/circle.png' alt={b.content}/></Card.Subtitle> : ""}
+                            {b.type === "image" && b.content === "point" ?
+                                <Card.Subtitle><img src='/img/point.png' alt={b.content}/></Card.Subtitle> : ""}
+                            {b.type === "image" && b.content === "phone" ?
+                                <Card.Subtitle><img src='/img/phone.png' alt={b.content}/></Card.Subtitle> : ""}
+                            {b.type !== "image" ? <Card.Subtitle><p>{b.content}</p></Card.Subtitle> : ""}
+                        </Card.Body>
+                    </Card></div>
+                }
+            })}
     </div>
 }
 

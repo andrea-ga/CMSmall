@@ -135,7 +135,7 @@ function AddPage(props) {
                      <Card.Body>
                     <Form.Group controlId="addType">
                         <Form.Label className='fw-light'>Type</Form.Label>
-                        <Form.Select aria-label="Type select" onChange={(ev) => {handleUpdateType(ev, b.id)}}>
+                        <Form.Select aria-label="Type select" defaultValue="header" onChange={(ev) => {handleUpdateType(ev, b.id)}}>
                             <option value="header">Header</option>
                             <option value="paragraph">Paragraph</option>
                             <option value="image">Image</option>

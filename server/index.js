@@ -41,7 +41,7 @@ passport.deserializeUser(function (user, callback) {
 });
 
 const session = require('express-session');
-const {getAllPages} = require("./pages-dao");
+const {getAllPages, updateBlock} = require("./pages-dao");
 
 app.use(session({
     secret: "yyyyyyyyxxxxxxxzzzzzzz",
@@ -195,8 +195,24 @@ app.delete('/api/pages/:idPage', isLoggedIn, (req, res) => {
 app.delete('/api/pages/:idPage/blocks/:idBlock', isLoggedIn, (req, res) => {
     const idPage = req.params.idPage;
     const idBlock = req.params.idBlock;
+    const position = req.body.position;
     pagesDao.deleteBlock(idPage, idBlock).then((result) => {
-        res.end();
+        pagesDao.getPageContent(idPage).then((list) => {
+            const blocksToUpdate = list.filter((b) => b.idPage == idPage && b.position > position);
+
+            if(blocksToUpdate.length != 0) {
+                blocksToUpdate.map(b => {
+                    pagesDao.updateBlock(b.idPage, b.id, {...b, position: b.position-1}).then((result) => {
+                        res.end();
+                    }).catch((error) => {
+                        res.status(500).send(error.message);
+                    });
+                });
+            } else
+                res.end();
+        }).catch((error) => {
+            res.status(500).send(error.message);
+        });
     }).catch((error) => {
         res.status(500).send(error.message);
     });

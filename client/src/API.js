@@ -228,14 +228,17 @@ async function addBlock(idPage, type, content, position) {
     }
 }
 
-async function deleteBlock(idPage, idBlock) {
+async function deleteBlock(idPage, idBlock, position) {
     try {
         const response = await fetch(APIURL + `/pages/${idPage}/blocks/${idBlock}`, {
             method: "DELETE",
             headers: {
                 'Content-Type': "application/json"
             },
-            credentials: 'include'
+            credentials: 'include',
+            body: JSON.stringify({
+                position: position
+            })
         });
         if (response.ok) {
             return await response.json;
