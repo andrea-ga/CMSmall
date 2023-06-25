@@ -171,7 +171,7 @@ app.delete('/api/pages/:idPage', isLoggedIn, (req, res) => {
     pagesDao.deletePage(idPage).then((result) => {
         pagesDao.getPageContent(idPage).then((list) => {
             if(list.length != 0) {
-                pageBlocks.map((b) => {
+                list.map((b) => {
                     pagesDao.deleteBlock(idPage, b.id).then((result) => {
                         res.status(200).end();
                     }).catch((error) => {
