@@ -134,7 +134,7 @@ function AddPage(props) {
             </Row>
         </div>
         <br/>
-            <Card><Button disabled={waiting} onClick={addMoreBlocks}>ADD BLOCK</Button></Card>
+            <Card><Button disabled={waiting} onClick={addMoreBlocks}>ADD MORE BLOCKS</Button></Card>
         <br/>
             {blocks.sort((a,b) => (a.position - b.position)).map((b) => (
                 <div key={b.id}><Card>

@@ -45,7 +45,7 @@ function PagesList(props) {
 
     async function handleDelete(idPage) {
         setWaiting(true);
-        setPages((old) => old.filter((p) => p.id != idPage));
+        props.setPages((old) => old.filter((p) => p.id != idPage));
 
         await deletePage(idPage);
         setWaiting(false);
